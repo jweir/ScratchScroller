@@ -102,16 +102,50 @@
     events = [];
   }
 
-  function capture(event,delta,deltaX, deltaY){
+  function captureWheel(event,delta,deltaX, deltaY){
     clearTimeout(timer)
-    timer = setTimeout(endCapture,100)
+    timer = setTimeout(endCapture,50)
 
     events.push(deltaY);
     event.preventDefault();
     return false;
   }
 
-  $('html').mousewheel(capture);
+  $('html').mousewheel(captureWheel);
+  // $(document).on("scroll",function(){
+    // $("body").css("background","#EEE");
+    // clearTimeout(t)
+    // t = setTimeout(function(){ $("body").css("background","#FFF"); },50)
+    // return true;
+  // })
+
+  // document.addEventListener("touchstart", function(e){
+    // tt = [];
+    // push(e)
+    // return true;
+    // e.preventDefault();
+    // return false;
+  // });
+  // document.addEventListener("touchmove", function(e){
+    // push(e)
+    // return true;
+    // e.preventDefault();
+    // return false;
+  // });
+  // document.addEventListener("touchend", function(e){
+    // calc(tt)
+    // _.defer(function(){
+    // sn.set(sn.find());
+    // })
+    // e.preventDefault();
+    // return false;
+  // });
+  // document.addEventListener("touchcancel", function(e){
+    // e.preventDefault()
+    // $("body").css("background","#FF0");
+    // return true;
+  // });
+
 
 }(jQuery));
 
