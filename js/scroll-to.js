@@ -1,102 +1,118 @@
 (function($){
   // http://jqueryui.com/demos/effect/easing.html
+
   $.fn.scrollTo = function(options){
     var top = this.offset().top,
         h   = this.outerHeight(),
         wh  = $(window).height(),
-        ct  = top-(wh/2)+(h/2);    // calculated top
+        ct  = top - options.offset;    // calculated top
 
     options        = options        || {};
-    options.easing = options.easing || "easeOutQuart";
+    options.easing = options.easing || "easeInQuint";
     options.time   = options.time   || 800;
 
-    $("body").animate({scrollTop:ct},
-                      {queue: true, duration: options.time, easing: options.easing});
+    $("body").animate(
+      {scrollTop:ct},
+      {queue: true, duration: options.time, easing: options.easing});
+
     return this;
   }
 
 }(jQuery));
 
-(function(){
+(function(){ //ScrollLock
 
-  var collection = null,
-      focused = null;
+  var timer,
+      options,
+      selector;
 
-  function init(selector){
-    collection = $(selector);
-    focused    = $(collection[0]);
-    focused.scrollTo();
-    return collection;
+  function init($selector, $options){
+    options    = $options;
+    selector   = $selector;
+    $(window).resize(deferResize);
+    return set($(collection()[0]));
   }
 
   function refresh(){
-    return focused.scrollTo();
+    return find().scrollTo(options);
   }
 
   function next(){
-    return set(focused.next());
+    return set(find().next());
   }
 
   function prev(){
-    return set(focused.prev());
+    return set(find().prev());
+  }
+
+  function collection(){
+    return $(selector);
   }
 
   function set(o){
-    if(o.length){
-      focused = o;
-      return refresh()
+    if(o[0]){
+      o.scrollTo(options)
     } else {
-      return focused;
+      return find();
     }
   }
 
-  window.sn         = {};
-  window.sn.get     = function(){ return focused};
-  window.sn.init    = init;
-  window.sn.refresh = refresh;
-  window.sn.next    = next;
-  window.sn.prev    = prev;
+  function inView(el,top){
+    var elTop = $(el).position().top,
+        elH   = $(el).outerHeight();
+
+    return elTop <= top && (elTop + elH) > top;
+  }
+
+  function find(){
+    var t  = $(window).scrollTop() + options.offset,
+        fn = function(el){ return inView(el, t)};
+
+    return $(_.find(collection(), fn) || collection()[0]);
+  }
+
+  function deferResize(){
+    clearTimeout(timer);
+    timer = setTimeout(refresh, 25);
+  }
+
+  window.sn = {
+    init       : init,
+    collection : collection,
+    set        : set,
+    prev       : prev,
+    next       : next,
+    find       : find
+  }
 
 }());
 
+(function($){ // MouseWheel events
 
-(function($){
-
-  var capture = [],
-      captureTimer;
+  var events = [],
+      timer;
 
   function endCapture(){
     var sum = 0;
-    for(var n = 0; n < capture.length; n++){
-      sum += capture[n];
+    for(var n = 0; n < events.length; n++){
+      sum += events[n];
     }
 
-    console.log(sum)
     var x = sum < 0 ? sn.next() : sn.prev();
-    capture = [];
+    events = [];
   }
 
-  function scroll(event,delta,deltaX, deltaY){
-    if(captureTimer){clearTimeout(captureTimer)}
-    captureTimer = setTimeout(endCapture,100)
+  function capture(event,delta,deltaX, deltaY){
+    clearTimeout(timer)
+    timer = setTimeout(endCapture,100)
 
-    capture.push(deltaY);
-    // event.preventDefault();
-    // return false;
+    events.push(deltaY);
+    event.preventDefault();
+    return false;
   }
 
-  function swipe(event){
-  }
-
-  $(function(){
-    $('html').mousewheel(scroll);
-    $('body').bind("touchmove", scroll);
-  })
+  $('html').mousewheel(capture);
 
 }(jQuery));
 
-$(function(){ sn.init("section")});
-$(function(){
-
-  console.log("ok!")
-})
+$(function(){ sn.init("section", {offset: 50})});
