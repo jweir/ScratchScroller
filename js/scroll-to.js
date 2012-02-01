@@ -3,10 +3,11 @@
 
   $.fn.scrollTo = function(options){
     var top = this.offset().top,
-        h   = this.outerHeight(),
+        h   = this.outerHeight(true),
         wh  = $(window).height(),
-        ct  = top - options.offset;    // calculated top
+        ct  = top - (wh/2) + (h/2);    // calculated top
 
+        console.log(this, ct);
     options        = options        || {};
     options.easing = options.easing || "easeInQuint";
     options.time   = options.time   || 800;
@@ -16,7 +17,7 @@
       {queue: true, duration: options.time, easing: options.easing});
 
     return this;
-  }
+  };
 
 }(jQuery));
 
@@ -51,22 +52,24 @@
 
   function set(o){
     if(o[0]){
-      o.scrollTo(options)
+      return o.scrollTo(options);
     } else {
       return find();
     }
   }
 
-  function inView(el,top){
+  function inCenter(el){
     var elTop = $(el).position().top,
-        elH   = $(el).outerHeight();
+        elH   = $(el).outerHeight(true),
+        top   = $(window).scrollTop();
+        cen   = top + $(window).height()/2;
+        console.log(top, cen);
 
-    return elTop <= top && (elTop + elH) > top;
+    return elTop <= cen && (elTop + elH) > cen;
   }
 
   function find(){
-    var t  = $(window).scrollTop() + options.offset,
-        fn = function(el){ return inView(el, t)};
+    var fn = function(el){ return inCenter(el);};
 
     return $(_.find(collection(), fn) || collection()[0]);
   }
@@ -82,8 +85,9 @@
     set        : set,
     prev       : prev,
     next       : next,
-    find       : find
-  }
+    find       : find,
+    refresh    : refresh
+  };
 
 }());
 
@@ -103,8 +107,8 @@
   }
 
   function captureWheel(event,delta,deltaX, deltaY){
-    clearTimeout(timer)
-    timer = setTimeout(endCapture,50)
+    clearTimeout(timer);
+    timer = setTimeout(endCapture,50);
 
     events.push(deltaY);
     event.preventDefault();
@@ -149,4 +153,4 @@
 
 }(jQuery));
 
-$(function(){ sn.init("section", {offset: 50})});
+$(function(){ sn.init("section", {});});
