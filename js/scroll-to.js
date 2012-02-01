@@ -116,8 +116,11 @@
 
 (function($){ // MouseWheel events
 
+  var timer;
   $(document).on("scroll",function(e){
-    sn.set(sn.find());
+    sn.find();
+    clearTimeout(timer);
+    timer = setTimeout(function(){ sn.set(sn.find()) }, 200);
     return true;
   })
 
