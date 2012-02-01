@@ -14,7 +14,7 @@
 
     $("body").animate(
       {scrollTop:ct},
-      {queue: true, duration: options.time, easing: options.easing});
+      {queue: false, duration: options.time, easing: options.easing});
 
     return this;
   };
@@ -35,7 +35,7 @@
   }
 
   function refresh(){
-    return find().scrollTo(options);
+    return set(find());
   }
 
   function next(){
@@ -51,10 +51,11 @@
   }
 
   function set(o){
+    collection().removeClass("active");
     if(o[0]){
-      return o.scrollTo(options);
+      return o.scrollTo(options).addClass("active");
     } else {
-      return find();
+      return find().addClass("active");
     }
   }
 
@@ -69,9 +70,7 @@
   }
 
   function find(){
-    var fn = function(el){ return inCenter(el);};
-
-    return $(_.find(collection(), fn) || collection()[0]);
+    return $(_.find(collection(), inCenter) || collection()[0]);
   }
 
   function deferResize(){
