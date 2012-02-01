@@ -13,8 +13,8 @@
 
     if(Math.floor(ct) == $("body").scrollTop()){ return this; }
 
-    $("body").stop().animate(
-      { scrollTop:ct},
+    $("#pane").stop().animate(
+      { top:ct},
       { queue: false,
         duration: options.time,
         easing: options.easing,
@@ -38,7 +38,6 @@
   }
 
   function refresh(){
-    console.log("refresh")
     return set(find());
   }
 
@@ -57,17 +56,24 @@
   }
 
   function set(o){
-    console.log(o);
-    collection().removeClass("active");
     if(o[0]){
-      return o.scrollTo().addClass("active");
+      return o;
     } else {
-      return find().addClass("active");
+      return find();
     }
   }
 
+  function offBy(el){
+    var elTop = $(el).offset().top,
+        elH   = $(el).outerHeight(),
+        top   = $(window).scrollTop();
+        cen   = top + $(window).height()/2;
+
+    return cen - elTop - (elH/2);
+  }
+
   function inCenter(el){
-    var elTop = $(el).position().top,
+    var elTop = $(el).offset().top,
         elH   = $(el).outerHeight(),
         top   = $(window).scrollTop();
         cen   = top + $(window).height()/2;
@@ -76,12 +82,17 @@
   }
 
   function find(){
-    return $(_.find(collection(), inCenter) || collection()[0]);
+    return select($(_.find(collection(), inCenter) || collection()[0]));
+  }
+
+  function select(el){
+    el.addClass("active");
+    sn.collection().parent().find(".active").not(el).removeClass("active");
+    return el;
   }
 
   // FIXME being called after a scroll
   function deferResize(){
-    return true;
     clearTimeout(timer);
     timer = setTimeout(refresh, 25);
   }
@@ -93,7 +104,8 @@
     prev       : prev,
     next       : next,
     find       : find,
-    refresh    : refresh
+    refresh    : refresh,
+    offset     : offBy
   };
 
 }());
@@ -133,19 +145,20 @@
     return false;
   }
 
-  $('body').mousedown(function(){alert('d'); $("body").css("background","#FF0")});
-  $('html').mousewheel(captureWheel);
+  // $('html').mousewheel(captureWheel);
 
   var t;
   $(document).on("scroll",function(e){
-    if($("body").hasClass("-scrolling")){
-      return true;
-    } else {
-      return true;// FIXME
-      clearTimeout(t);
-      t = setTimeout(sn.refresh,500);
-      return true;
-    }
+    sn.set(sn.find());
+    return true;
+    // if($("body").hasClass("-scrolling")){
+      // return true;
+    // } else {
+      // return true;// FIXME
+      // clearTimeout(t);
+      // t = setTimeout(sn.refresh,500);
+      // return true;
+    // }
   })
 
   // document.addEventListener("touchstart", function(e){
