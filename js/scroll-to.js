@@ -60,11 +60,11 @@
   var timer,
   selector;
 
-  // FIXME refresh does not always go to the correct item
+  // FIXME browser refresh does not always go to the correct item
   function init($selector){
     selector   = $selector;
     $(window).resize(deferResize);
-    return set(select($(collection()[0])));
+    return set(find());
   }
 
   function refresh(){
@@ -151,7 +151,7 @@
 
 }());
 
-(function($){
+(function(){
   // Scroll event handling
 
   var timer,
@@ -166,7 +166,7 @@
     return sn.set(sn.find());
   }
 
-  $(window).on("scroll",function(e){
+  function onScroll(e){
     if(enabled){
       sn.find();
       clearTimeout(timer);
@@ -176,8 +176,23 @@
       e.preventDefault();
       return false;
     }
-  })
+  }
 
-}(jQuery));
+  function onKey(e){
+    switch(e.keyCode){
+      case 38: sn.prev(); break; // up arrow
+      case 40: sn.next(); break; // down arrow
+    }
+    return true;
+  }
 
-$(function(){ sn.init("#pane .section");});
+  function initEvents(){
+    $(window).on("scroll",onScroll);
+    $(document).on("keyup", onKey);
+  }
+
+  sn.initEvents = initEvents;
+
+}());
+
+$(function(){ sn.init("#pane .section"); sn.initEvents()});
