@@ -3,18 +3,23 @@
 
   $.fn.scrollTo = function(options){
     var top = this.offset().top,
-        h   = this.outerHeight(true),
+        h   = this.outerHeight(),
         wh  = $(window).height(),
         ct  = top - (wh/2) + (h/2);    // calculated top
 
-        console.log(this, ct);
     options        = options        || {};
     options.easing = options.easing || "easeInQuint";
     options.time   = options.time   || 800;
 
-    $("body").animate(
-      {scrollTop:ct},
-      {queue: false, duration: options.time, easing: options.easing});
+    if(Math.floor(ct) == $("body").scrollTop()){ return this; }
+
+    $("body").stop().animate(
+      { scrollTop:ct},
+      { queue: false,
+        duration: options.time,
+        easing: options.easing,
+        complete: function(){ $("body").removeClass("-scrolling");}
+      }).addClass("-scrolling");
 
     return this;
   };
@@ -24,25 +29,26 @@
 (function(){ //ScrollLock
 
   var timer,
-      options,
       selector;
 
-  function init($selector, $options){
-    options    = $options;
+  function init($selector){
     selector   = $selector;
     $(window).resize(deferResize);
     return set($(collection()[0]));
   }
 
   function refresh(){
+    console.log("refresh")
     return set(find());
   }
 
   function next(){
+    console.log("next")
     return set(find().next());
   }
 
   function prev(){
+    console.log("prev")
     return set(find().prev());
   }
 
@@ -51,9 +57,10 @@
   }
 
   function set(o){
+    console.log(o);
     collection().removeClass("active");
     if(o[0]){
-      return o.scrollTo(options).addClass("active");
+      return o.scrollTo().addClass("active");
     } else {
       return find().addClass("active");
     }
@@ -61,10 +68,9 @@
 
   function inCenter(el){
     var elTop = $(el).position().top,
-        elH   = $(el).outerHeight(true),
+        elH   = $(el).outerHeight(),
         top   = $(window).scrollTop();
         cen   = top + $(window).height()/2;
-        console.log(top, cen);
 
     return elTop <= cen && (elTop + elH) > cen;
   }
@@ -73,7 +79,9 @@
     return $(_.find(collection(), inCenter) || collection()[0]);
   }
 
+  // FIXME being called after a scroll
   function deferResize(){
+    return true;
     clearTimeout(timer);
     timer = setTimeout(refresh, 25);
   }
@@ -102,25 +110,43 @@
     }
 
     var x = sum < 0 ? sn.next() : sn.prev();
-    events = [];
   }
 
-  function captureWheel(event,delta,deltaX, deltaY){
-    clearTimeout(timer);
-    timer = setTimeout(endCapture,50);
+  var doCapture = true;
+  var doTimer;
 
-    events.push(deltaY);
-    event.preventDefault();
+  function captureWheel(event,delta,deltaX, deltaY){
+    if(doCapture){
+      events.push(deltaY);
+      event.preventDefault();
+      clearTimeout(doTimer);
+      doTimer = setTimeout(endCapture, 100);
+    }
+    if(events.length > 3){
+      doCapture = false;
+      clearTimeout(timer);
+      timer = setTimeout(function(){
+        events = [];
+        doCapture = true;
+      },70);
+    }
     return false;
   }
 
+  $('body').mousedown(function(){alert('d'); $("body").css("background","#FF0")});
   $('html').mousewheel(captureWheel);
-  // $(document).on("scroll",function(){
-    // $("body").css("background","#EEE");
-    // clearTimeout(t)
-    // t = setTimeout(function(){ $("body").css("background","#FFF"); },50)
-    // return true;
-  // })
+
+  var t;
+  $(document).on("scroll",function(e){
+    if($("body").hasClass("-scrolling")){
+      return true;
+    } else {
+      return true;// FIXME
+      clearTimeout(t);
+      t = setTimeout(sn.refresh,500);
+      return true;
+    }
+  })
 
   // document.addEventListener("touchstart", function(e){
     // tt = [];
@@ -152,4 +178,4 @@
 
 }(jQuery));
 
-$(function(){ sn.init("section", {});});
+$(function(){ sn.init("section");});
