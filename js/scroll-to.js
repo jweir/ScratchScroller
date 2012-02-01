@@ -9,13 +9,13 @@
 
     // TODO detect if CSS transitions are supported, if not
     // animate via jquery
-    // el.stop().animate({
-      // top      : top,
-      // easing   : "easeInQuint",
-      // duration : 500
-    // });
+    el.stop().animate({
+      top      : top,
+      easing   : "easeInQuint",
+      duration : 500
+    });
 
-    el.css({top: top})
+    // el.css({top: top})
 
     return el;
   }
@@ -116,82 +116,10 @@
 
 (function($){ // MouseWheel events
 
-  var events = [],
-      timer;
-
-  function endCapture(){
-    var sum = 0;
-    for(var n = 0; n < events.length; n++){
-      sum += events[n];
-    }
-
-    var x = sum < 0 ? sn.next() : sn.prev();
-  }
-
-  var doCapture = true;
-  var doTimer;
-
-  function captureWheel(event,delta,deltaX, deltaY){
-    if(doCapture){
-      events.push(deltaY);
-      event.preventDefault();
-      clearTimeout(doTimer);
-      doTimer = setTimeout(endCapture, 100);
-    }
-    if(events.length > 3){
-      doCapture = false;
-      clearTimeout(timer);
-      timer = setTimeout(function(){
-        events = [];
-        doCapture = true;
-      },70);
-    }
-    return false;
-  }
-
-  // $('html').mousewheel(captureWheel);
-
-  var t;
   $(document).on("scroll",function(e){
     sn.set(sn.find());
     return true;
-    // if($("body").hasClass("-scrolling")){
-      // return true;
-    // } else {
-      // return true;// FIXME
-      // clearTimeout(t);
-      // t = setTimeout(sn.refresh,500);
-      // return true;
-    // }
   })
-
-  // document.addEventListener("touchstart", function(e){
-    // tt = [];
-    // push(e)
-    // return true;
-    // e.preventDefault();
-    // return false;
-  // });
-  // document.addEventListener("touchmove", function(e){
-    // push(e)
-    // return true;
-    // e.preventDefault();
-    // return false;
-  // });
-  // document.addEventListener("touchend", function(e){
-    // calc(tt)
-    // _.defer(function(){
-    // sn.set(sn.find());
-    // })
-    // e.preventDefault();
-    // return false;
-  // });
-  // document.addEventListener("touchcancel", function(e){
-    // e.preventDefault()
-    // $("body").css("background","#FF0");
-    // return true;
-  // });
-
 
 }(jQuery));
 
