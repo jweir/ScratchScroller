@@ -34,10 +34,9 @@
   function scroll(el, top){
     if(veryNear(el,top)){ return el; }
 
-    el.stop().animate({
-      top      : top},
-      {
-        easing   : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
+    el.stop().animate(
+      { top      : top},
+      { easing   : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
         duration : 500,
         complete : compensate
       });
@@ -89,8 +88,13 @@
   }
 
   function select(el){
-    el.addClass("active");
-    sn.collection().parent().find(".active").not(el).removeClass("active");
+    if(el.hasClass("active")){ return el;}
+
+    el.addClass("active").trigger("sn:enter");
+    sn.collection().parent().find(".active").not(el)
+      .removeClass("active")
+      .trigger("sn:exit");
+
     return el;
   }
 
@@ -195,4 +199,27 @@
 
 }());
 
-$(function(){ sn.init("#pane .section"); sn.initEvents()});
+(function(){
+
+  function enter(){
+    console.log(this+ " entered");
+  }
+
+  function exit(){
+    console.log(this+ " exited");
+  }
+
+  function init(){
+    $("#pane").delegate(".section", "sn:exit", exit);
+    $("#pane").delegate(".section", "sn:enter", enter);
+  }
+
+  sn.initObservers = init;
+
+}());
+
+$(function(){
+  sn.init("#pane .section");
+  sn.initEvents()
+  sn.initObservers();
+});
