@@ -3,10 +3,11 @@
   <head>
     <title>Dev</title>
     <style type="text/css">
-      section {
+      .section {
         padding: 40px; height: 400px; width:600px; background-color: #000; color: #FFF; font-size: 80px;
 
         opacity: 0.5;
+        background: #999;
         -webkit-transition: opacity 1.3s ease-out;  /* Saf3.2+, Chrome */
         -moz-transition: opacity 1.3s ease-out;  /* FF4+ */
         -ms-transition: opacity 1.3s ease-out;  /* IE10 */
@@ -14,10 +15,8 @@
         transition: opacity 1.3s ease-out;
       }
 
-      .-scrolling{
-        background-color:#FF0;
-      }
-      section.active {
+      .section.active {
+        background: #000;
         opacity: 1;
       }
       hr {
@@ -49,22 +48,20 @@
     </style>
     <script type='text/javascript' src='/js/jquery-1.7.1.min.js'></script>
     <script type='text/javascript' src='/js/jquery-ui-1.8.17.custom.min.js'></script>
-    <script type='text/javascript' src='/js/jquery.mousewheel.min.js'></script>
     <script type='text/javascript' src='/js/underscore-min.js'></script>
     <script type='text/javascript' src='/js/scroll-to.js'></script>
   </head>
   <body>
-    <div id="console" style="position:fixed; right:0px; top:0px">Hello</div>
     <hr/>
     <div id="pane">
-      <section>one</section>
-      <section>two</section>
-      <section>three</section>
-      <section>four</section>
-      <section>five</section>
-      <section>six</section>
-      <section>seven</section>
-      <section>eight</section>
+      <div class='section'>one</div>
+      <div class='section'>two</div>
+      <div class='section'>three</div>
+      <div class='section'>four</div>
+      <div class='section'>five</div>
+      <div class='section'>six</div>
+      <div class='section'>seven</div>
+      <div class='section'>eight</div>
     </div>
   </body>
 </html>

@@ -1,39 +1,40 @@
 (function($){
-  // http://jqueryui.com/demos/effect/easing.html
-
   var timer;
 
-  var v = 0;
-
+  // Compensate for the scollabr and pane getting out of alignment
   function compensate(){
-    // Compensate for the scoll getting out of alignment
     var x = parseInt($(this).css("top"),10),
-    y = $(window).scrollTop()
-    self = this;
+        y = $(window).scrollTop(),
+        self = this;
 
-    $("#console").text(v++);
     sn.halt(function(){
       $(self).css({top:0});
       $(window).scrollTop(y -x);
     })
   }
 
+  // iOS needs this since the offset might be very close
+  function veryNear(el,top){
+    var elT = parseInt(el.css("top"),10);
+    if(! isNaN(elT) && Math.abs(Math.abs(elT) - Math.abs(top)) < 2){
+      return true;
+    } else {
+      return false
+    }
+  }
+
   function scroll(el, top){
-    // TODO do not animate if the element is already in place
-    // if(Math.floor(top) == parseInt(el.css(top),10)){
-    // alert("k");
-    // return true;
-    // }
+    if(veryNear(el,top)){ return this; }
 
     el.stop().animate({
       top      : top},
       {
-        easing   : "easeOutExpo",
+        easing   : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
         duration : 500,
         complete : compensate
       });
 
-      return el;
+    return el;
   }
 
   $.fn.scrollTo = function(top, options){
@@ -51,6 +52,7 @@
   var timer,
   selector;
 
+  // FIXME refresh does not always go to the correct item
   function init($selector){
     selector   = $selector;
     $(window).resize(deferResize);
@@ -58,7 +60,6 @@
   }
 
   function refresh(){
-    console.log("refresh");
     return set(find());
   }
 
@@ -76,7 +77,6 @@
   }
 
   function set(o){
-    console.log("set");
     return scroll(o[0] ? o : find());
   }
 
@@ -119,11 +119,12 @@
     timer = setTimeout(refresh, 25);
   }
 
+  // Block the default scrolling so the script
+  // does not go into a loop
   function halt(fn){
-    $("body").addClass("halt");
     sn.toggle(false);
     fn();
-    setTimeout(function(){sn.toggle(true); $("body").removeClass("halt");},1000);
+    setTimeout(function(){sn.toggle(true);},50);
 
   }
 
@@ -151,12 +152,11 @@
     return enabled;
   }
 
-  $(document).on("scroll",function(e){
+  $(window).on("scroll",function(e){
     if(enabled){
       sn.find();
       clearTimeout(timer);
       timer = setTimeout(function(){
-        console.log("scroll call");
         sn.set(sn.find()) }, 200);
       return true;
     } else {
@@ -167,4 +167,4 @@
 
 }(jQuery));
 
-$(function(){ sn.init("section");});
+$(function(){ sn.init("#pane .section");});
