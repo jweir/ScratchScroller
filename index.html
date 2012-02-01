@@ -4,7 +4,9 @@
     <title>Dev</title>
     <style type="text/css">
       .section {
-        padding: 40px; min-height: 200px; width:600px; background-color: #000; color: #FFF; font-size: 80px;
+        padding: 10%; height: 400px; 
+        width:80%; background-color: #000; color: #FFF; font-size: 80px;
+        overflow: hidden;
         text-align: center;
         opacity: 0.25;
         filter: alpha(opacity = 25);
@@ -22,7 +24,7 @@
         opacity: 1;
       }
       hr {
-        z-index: 99; position: fixed; height: 1px; top:50%; left: 0px; width:100%; border:0; background: #F00; padding:0; margin:0;
+        z-index: 99; position: fixed; height: 2px; top:50%; left: 0px; width:100%; border:0; background: #F00; padding:0; margin:0;
       }
 
       body {
@@ -36,7 +38,9 @@
       }
 
       #pane {
+        left: 10%;
         position: absolute;
+        width: 80%;
         padding: 600px 0;
       }
 
@@ -47,19 +51,41 @@
         -o-transition:        top   0.2s   ease-out;      /*   Opera      10.5+    */
         transition:           top   0.2s   ease-out;
       }
+
+      #masthead {
+        background: #FFF;
+        color: #000;
+        width:10%;
+        position: fixed;
+        top:40%;
+        left:0px;
+        height:20%;
+      }
+
+      #legend {
+        background: #FFF;
+        color: #000;
+        width:10%;
+        position: fixed;
+        top:40%;
+        right:0px;
+        height:20%;
+      }
     </style>
-    <script type='text/javascript' src='/js/jquery-1.7.1.min.js'></script>
-    <script type='text/javascript' src='/js/jquery-ui-1.8.17.custom.min.js'></script>
-    <script type='text/javascript' src='/js/underscore-min.js'></script>
-    <script type='text/javascript' src='/js/scroll-to.js'></script>
+    <script type='text/javascript' src='js/jquery-1.7.1.min.js'></script>
+    <script type='text/javascript' src='js/jquery-ui-1.8.17.custom.min.js'></script>
+    <script type='text/javascript' src='js/underscore-min.js'></script>
+    <script type='text/javascript' src='js/scroll-to.js'></script>
   </head>
   <body>
     <hr/>
-    <div>
+    <div id="masthead"> logo </div>
+    <div id="legend"> legend </div>
     <div id="pane">
+      <!-- frames (video) are causing a load issue -->
       <div class='section'><img src='http://farm8.staticflickr.com/7010/6464705967_e36885ca18_z.jpg'/></div>
-      <div class='section'><iframe src="http://player.vimeo.com/video/16285298?title=0&amp;byline=0&amp;portrait=0" width="100%" height="300px" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div>
-      <div class='section'><iframe src="http://player.vimeo.com/video/3114617?title=0&amp;byline=0&amp;portrait=0&amp;color=ecf000" width="100%" height="300px" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div>
+      <div class='section'>two</div>
+      <div class='section'>three</div>
       <div class='section'>four</div>
       <div class='section'>five</div>
       <div class='section'>six</div>

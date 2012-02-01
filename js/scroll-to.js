@@ -15,6 +15,9 @@
         y = $(window).scrollTop(),
         self = this;
 
+    // Do not comp unless necessary
+    if(x >= 0){ return true; }
+
     sn.halt(function(){
       $(self).css({top:0});
       $(window).scrollTop(y -x);
@@ -174,7 +177,7 @@
     if(enabled){
       sn.find();
       clearTimeout(timer);
-      timer = setTimeout(scrollEnd,200);
+      timer = setTimeout(scrollEnd,100);
       return true;
     } else {
       e.preventDefault();
@@ -201,13 +204,8 @@
 
 (function(){
 
-  function enter(){
-    console.log(this+ " entered");
-  }
-
-  function exit(){
-    console.log(this+ " exited");
-  }
+  function enter(){}
+  function exit(){}
 
   function init(){
     $("#pane").delegate(".section", "sn:exit", exit);
@@ -221,5 +219,5 @@
 $(function(){
   sn.init("#pane .section");
   sn.initEvents()
-  sn.initObservers();
+  // sn.initObservers();
 });
