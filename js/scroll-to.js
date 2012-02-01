@@ -1,25 +1,29 @@
 (function($){
   // http://jqueryui.com/demos/effect/easing.html
 
-  $.fn.scrollTo = function(options){
-    var top = this.offset().top,
-        h   = this.outerHeight(),
-        wh  = $(window).height(),
-        ct  = top - (wh/2) + (h/2);    // calculated top
+  var timer;
 
-    options        = options        || {};
-    options.easing = options.easing || "easeInQuint";
-    options.time   = options.time   || 800;
+  function scroll(el, top){
+    // TODO do not animate if the element is already in place
+    // if(Math.floor(top) == el.css(top);
 
-    if(Math.floor(ct) == $("body").scrollTop()){ return this; }
+    // TODO detect if CSS transitions are supported, if not
+    // animate via jquery
+    // el.stop().animate({
+      // top      : top,
+      // easing   : "easeInQuint",
+      // duration : 500
+    // });
 
-    $("#pane").stop().animate(
-      { top:ct},
-      { queue: false,
-        duration: options.time,
-        easing: options.easing,
-        complete: function(){ $("body").removeClass("-scrolling");}
-      }).addClass("-scrolling");
+    el.css({top: top})
+
+    return el;
+  }
+
+  $.fn.scrollTo = function(top, options){
+    var self = this;
+    clearTimeout(timer);
+    timer = setTimeout(function(){scroll(self,top)}, 10);
 
     return this;
   };
@@ -41,14 +45,13 @@
     return set(find());
   }
 
+  // TODO next & prev should just scroll to those elements
   function next(){
-    console.log("next")
-    return set(find().next());
+    return set(select(find().next()));
   }
 
   function prev(){
-    console.log("prev")
-    return set(find().prev());
+    return set(select(find().prev()));
   }
 
   function collection(){
@@ -56,15 +59,22 @@
   }
 
   function set(o){
-    if(o[0]){
-      return o;
-    } else {
-      return find();
-    }
+    return scroll(o[0] ? o : find());
+  }
+
+  function select(el){
+    el.addClass("active");
+    sn.collection().parent().find(".active").not(el).removeClass("active");
+    return el;
+  }
+
+  function scroll(el){
+    el.parent().scrollTo(offBy(el))
+    return el;
   }
 
   function offBy(el){
-    var elTop = $(el).offset().top,
+    var elTop = $(el).offset().top - $(el).parent().offset().top,
         elH   = $(el).outerHeight(),
         top   = $(window).scrollTop();
         cen   = top + $(window).height()/2;
@@ -81,17 +91,11 @@
     return elTop <= cen && (elTop + elH) > cen;
   }
 
+  // FIXME find nearest not collection[0]
   function find(){
     return select($(_.find(collection(), inCenter) || collection()[0]));
   }
 
-  function select(el){
-    el.addClass("active");
-    sn.collection().parent().find(".active").not(el).removeClass("active");
-    return el;
-  }
-
-  // FIXME being called after a scroll
   function deferResize(){
     clearTimeout(timer);
     timer = setTimeout(refresh, 25);

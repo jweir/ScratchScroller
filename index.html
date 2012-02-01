@@ -29,7 +29,13 @@
       }
 
       #pane {
-        position: relative;
+        position: absolute;
+        padding: 600px 0;
+        -webkit-transition:   top   0.2s   ease-out;      /*   Saf3.2+,   Chrome   */
+        -moz-transition:      top   0.2s   ease-out;      /*   FF4+       */
+        -ms-transition:       top   0.2s   ease-out;      /*   IE10       */
+        -o-transition:        top   0.2s   ease-out;      /*   Opera      10.5+    */
+        transition:           top   0.2s   ease-out;
       }
 
     </style>
