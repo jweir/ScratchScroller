@@ -1,7 +1,15 @@
-(function($){
+// scroll-n (sn)
+// copyright 2012 John Weir & Fame Driver LLC
+// requires jquery & underscore
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+(function(){
   var timer;
 
-  // Compensate for the scollabr and pane getting out of alignment
+  // compensate for the scollabr and pane getting out of alignment
   function compensate(){
     var x = parseInt($(this).css("top"),10),
         y = $(window).scrollTop(),
@@ -13,7 +21,7 @@
     })
   }
 
-  // iOS needs this since the offset might be very close
+  // iOS generates an awful jitter since the elements by off by a fraction and never sync
   function veryNear(el,top){
     var elT = parseInt(el.css("top"),10);
     if(! isNaN(elT) && Math.abs(Math.abs(elT) - Math.abs(top)) < 2){
@@ -24,7 +32,7 @@
   }
 
   function scroll(el, top){
-    if(veryNear(el,top)){ return this; }
+    if(veryNear(el,top)){ return el; }
 
     el.stop().animate({
       top      : top},
@@ -45,9 +53,9 @@
     return this;
   };
 
-}(jQuery));
+}());
 
-(function(){ //ScrollLock
+(function(){
 
   var timer,
   selector;
@@ -63,7 +71,7 @@
     return set(find());
   }
 
-  // TODO next & prev should just scroll to those elements
+  // TODO (minor) next & prev should just scroll to those elements
   function next(){
     return set(select(find().next()));
   }
@@ -128,6 +136,7 @@
 
   }
 
+  // public functions
   window.sn = {
     init       : init,
     collection : collection,
@@ -142,7 +151,8 @@
 
 }());
 
-(function($){ // MouseWheel events
+(function($){
+  // Scroll event handling
 
   var timer,
       enabled = true;
@@ -152,12 +162,15 @@
     return enabled;
   }
 
+  function scrollEnd(){
+    return sn.set(sn.find());
+  }
+
   $(window).on("scroll",function(e){
     if(enabled){
       sn.find();
       clearTimeout(timer);
-      timer = setTimeout(function(){
-        sn.set(sn.find()) }, 200);
+      timer = setTimeout(scrollEnd,200);
       return true;
     } else {
       e.preventDefault();

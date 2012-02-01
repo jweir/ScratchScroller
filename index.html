@@ -4,10 +4,10 @@
     <title>Dev</title>
     <style type="text/css">
       .section {
-        padding: 40px; height: 400px; width:600px; background-color: #000; color: #FFF; font-size: 80px;
-
-        opacity: 0.5;
-        background: #999;
+        padding: 40px; min-height: 400px; width:600px; background-color: #000; color: #FFF; font-size: 80px;
+        text-align: center;
+        opacity: 0.25;
+        background: #000;
         -webkit-transition: opacity 1.3s ease-out;  /* Saf3.2+, Chrome */
         -moz-transition: opacity 1.3s ease-out;  /* FF4+ */
         -ms-transition: opacity 1.3s ease-out;  /* IE10 */
@@ -16,7 +16,6 @@
       }
 
       .section.active {
-        background: #000;
         opacity: 1;
       }
       hr {
@@ -25,7 +24,7 @@
 
       body {
         margin:600px 20px;
-        background: #FFF;
+        background: #000;
         font-family: courier;
       }
       .halt {
@@ -54,9 +53,9 @@
   <body>
     <hr/>
     <div id="pane">
-      <div class='section'>one</div>
-      <div class='section'>two</div>
-      <div class='section'>three</div>
+      <div class='section'><img src='http://farm8.staticflickr.com/7010/6464705967_e36885ca18_z.jpg'/></div>
+      <div class='section'><iframe src="http://player.vimeo.com/video/16285298?title=0&amp;byline=0&amp;portrait=0" width="100%" height="300px" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div>
+      <div class='section'><iframe src="http://player.vimeo.com/video/3114617?title=0&amp;byline=0&amp;portrait=0&amp;color=ecf000" width="100%" height="300px" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe></div>
       <div class='section'>four</div>
       <div class='section'>five</div>
       <div class='section'>six</div>
