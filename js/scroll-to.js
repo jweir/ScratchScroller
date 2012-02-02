@@ -9,29 +9,9 @@
 (function(){
   var timer;
 
-  // compensate for the scollabr and pane getting out of alignment
-  function compensate(){
-    setTimeout(function(){sn.toggle(true)},10);
-
-    return false;
-    var x = parseInt($(this).css("top"),10),
-        y = $(window).scrollTop(),
-        self = this;
-
-    // Do not comp unless necessary
-    if(x >= 0){ return true; }
-
-    sn.halt(function(){
-      $(self).css({top:0});
-      $(window).scrollTop(y -x);
-    });
-
-    return this;
-  }
-
   // iOS generates an awful jitter since the elements by off by a fraction and never sync
-  function veryNear(el,top){
-    var elT = parseInt(el.css("top"),10);
+  function veryNear(top){
+    var elT = $(window).scrollTop();
     if(! isNaN(elT) && Math.abs(Math.abs(elT) - Math.abs(top)) < 2){
       return true;
     } else {
@@ -39,29 +19,21 @@
     }
   }
 
-  function scroll(el, top){
-    if(veryNear(el,top)){ return el; }
+  function scroll(top){
+    if(veryNear(top)){ return true; }
 
-    console.log(top)
-    sn.toggle(false)
-    $(window).scrollTop(top);
-    compensate()
-    return el;
     $("html, body").stop().animate(
-      { scrollTop      : -1*top},
+      { scrollTop      : top},
       { easing   : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
-        duration : 500,
-        complete : compensate
+        duration : 550
       });
 
-    return el;
+    return true;
   }
 
   $.fn.scrollTo = function(top, options){
-    var self = this;
     clearTimeout(timer);
-    timer = setTimeout(function(){scroll(self,top);}, 10);
-
+    timer = setTimeout(function(){scroll(top);}, 10);
     return this;
   };
 
@@ -112,28 +84,28 @@
   }
 
   function scroll(el){
-    el.parent().scrollTo(offBy(el));
+    el.scrollTo(offBy(el));
     return el;
   }
 
-  function offBy(el){
-    var elTop = $(el).offset().top,// - $(el).parent().offset().top,
-        elH   = $(el).outerHeight(),
-        top   = $(window).scrollTop(),
-        cen   = $(window).height()/2;
+  function dim(el){
+    return {
+      elTop : $(el).offset().top,
+      elH   : $(el).outerHeight(),
+      top   : $(window).scrollTop(),
+      mid   : $(window).height()/2
+    };
+  }
 
-        debugger
-    return parseInt(elTop - cen + (elH/2));// + cen - elH);
-    return parseInt(cen - elTop - (elH/2), 10);
+  function offBy(el){
+    var d = dim(el);
+    return parseInt(d.elTop - d.mid + (d.elH/2));
   }
 
   function inCenter(el){
-    var elTop = $(el).offset().top,
-        elH   = $(el).outerHeight(),
-        top   = $(window).scrollTop(),
-        cen   = top + $(window).height()/2;
-
-    return elTop <= cen && (elTop + elH) > cen;
+    var d = dim(el);
+    d.cen = d.top + d.mid;
+    return d.elTop <= d.cen && (d.elTop + d.elH) > d.cen;
   }
 
   function headsOrTails(){
@@ -156,15 +128,6 @@
     timer = setTimeout(refresh, 25);
   }
 
-  // Block the default scrolling so the script
-  // does not go into a loop
-  function halt(fn){
-    sn.toggle(false);
-    fn();
-    setTimeout(function(){sn.toggle(true);},50);
-
-  }
-
   // public functions
   window.sn = {
     init       : init,
@@ -174,8 +137,7 @@
     next       : next,
     find       : find,
     refresh    : refresh,
-    offset     : offBy,
-    halt       : halt
+    offset     : offBy
   };
 
 }());
@@ -183,28 +145,17 @@
 (function(){
   // Scroll event handling
 
-  var timer,
-      enabled = true;
-
-  window.sn.toggle = function(state){
-    enabled = state;
-    return enabled;
-  };
+  var timer;
 
   function scrollEnd(){
     return sn.set(sn.find());
   }
 
   function onScroll(e){
-    if(enabled){
-      sn.find();
-      clearTimeout(timer);
-      timer = setTimeout(scrollEnd,100);
-      return true;
-    } else {
-      e.preventDefault();
-      return false;
-    }
+    sn.find();
+    clearTimeout(timer);
+    timer = setTimeout(scrollEnd,300);
+    return true;
   }
 
   function onKey(e){
