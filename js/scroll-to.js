@@ -12,7 +12,7 @@
   // compensate for the scollabr and pane getting out of alignment
   function compensate(){
     var x = parseInt($(this).css("top"),10),
-        y = $(window).scrollTop(),
+        y = $("body").scrollTop(),
         self = this;
 
     // Do not comp unless necessary
@@ -20,7 +20,7 @@
 
     sn.halt(function(){
       $(self).css({top:0});
-      $(window).scrollTop(y -x);
+      $("body").scrollTop(y -x);
     });
 
     return this;
@@ -37,6 +37,7 @@
   }
 
   function scroll(el, top){
+    debugger;
     if(veryNear(el,top)){ return el; }
 
     el.stop().animate(
@@ -111,8 +112,8 @@
   function offBy(el){
     var elTop = $(el).offset().top - $(el).parent().offset().top,
         elH   = $(el).outerHeight(),
-        top   = $(window).scrollTop(),
-        cen   = top + $(window).height()/2;
+        top   = $("body").scrollTop(),
+        cen   = top + $("body").height()/2;
 
     return parseInt(cen - elTop - (elH/2), 10);
   }
@@ -120,14 +121,14 @@
   function inCenter(el){
     var elTop = $(el).offset().top,
         elH   = $(el).outerHeight(),
-        top   = $(window).scrollTop(),
-        cen   = top + $(window).height()/2;
+        top   = $("body").scrollTop(),
+        cen   = top + $("body").height()/2;
 
     return elTop <= cen && (elTop + elH) > cen;
   }
 
   function headsOrTails(){
-    var top   = $(window).scrollTop(),
+    var top   = $("body").scrollTop(),
         col   = collection().toArray(),
         head  = $(col.shift()),
         tail  = $(col.pop());
@@ -169,6 +170,16 @@
   };
 
 }());
+
+(function(){
+
+  $(window).resize(function(){
+    $("body").css("height", $(window).height());
+  });
+
+  $(function(){ $(window).resize();});
+
+})();
 
 (function(){
   // Scroll event handling
