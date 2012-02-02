@@ -11,6 +11,9 @@
 
   // compensate for the scollabr and pane getting out of alignment
   function compensate(){
+    setTimeout(function(){sn.toggle(true)},10);
+
+    return false;
     var x = parseInt($(this).css("top"),10),
         y = $(window).scrollTop(),
         self = this;
@@ -39,8 +42,13 @@
   function scroll(el, top){
     if(veryNear(el,top)){ return el; }
 
-    el.stop().animate(
-      { top      : top},
+    console.log(top)
+    sn.toggle(false)
+    $(window).scrollTop(top);
+    compensate()
+    return el;
+    $("html, body").stop().animate(
+      { scrollTop      : -1*top},
       { easing   : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
         duration : 500,
         complete : compensate
@@ -109,11 +117,13 @@
   }
 
   function offBy(el){
-    var elTop = $(el).offset().top - $(el).parent().offset().top,
+    var elTop = $(el).offset().top,// - $(el).parent().offset().top,
         elH   = $(el).outerHeight(),
         top   = $(window).scrollTop(),
-        cen   = top + $(window).height()/2;
+        cen   = $(window).height()/2;
 
+        debugger
+    return parseInt(elTop - cen + (elH/2));// + cen - elH);
     return parseInt(cen - elTop - (elH/2), 10);
   }
 
