@@ -18,7 +18,7 @@
   function init(){
     $(main+" "+item).scrollLock({
       easing: "easeOutExpo",
-      scrollDuration : 350,
+      scrollDuration : 850,
       scrollEndDelay : 220
     });
 
