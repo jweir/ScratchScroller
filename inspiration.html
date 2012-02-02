@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Theyskens</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<link type="text/css" href="assets/css/main_reset.css" rel="stylesheet">
+		<link type="text/css" href="assets/css/ds.css" rel="stylesheet">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+		<script type="text/javascript" src="/assets/js/jquery.easing-1.3.js"></script>
+		<script type="text/javascript" src="/assets/js/jquery.address-1.4.min.js?strict=false"></script>
+		<script type="text/javascript" src="/assets/js/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+		<script type="text/javascript">
+			var mdevice = 0;
+			var showSplash = false;
+
+		</script>
+		<script type="text/javascript" src="assets/js/ds.js"></script>
+		<!-- <link href="http://cloud.webtype.com/css/2c370c53-9a0f-4bc2-bdfb-374dbee208e4.css" rel="stylesheet" type="text/css" />-->
+		<script type="text/javascript">
+			var totalScroll = 0;
+			var threshold = 2.0;
+			var navigating = false;
+			var targY = 20;
+			var margin = 20;
+			var hj = 472 + margin;
+			var idCur = 1;
+			var idPre = 0;
+
+			function handle(delta) {
+				totalScroll += delta;
+				if(Math.abs(totalScroll) > threshold && !navigating) {
+					totalScroll = 0;
+					if(delta < 0) {
+						navigate(-1);
+					} else {
+						navigate(1);
+					}
+				}
+				if(Math.abs(delta) < .1) {
+					totalScroll = 0;
+					navigating = false;
+				}
+				var s = '';
+				if(delta < 0)
+					s = "down";
+				else
+					s = "up";
+
+				var niceTotal = roundNumber(totalScroll, 2);
+				var niceDelta = roundNumber(delta, 2);
+				s += ": " + niceDelta + ", total: " + niceTotal;
+			}
+
+			function wheel(event) {
+				var delta = 0;
+				if(!event)
+					event = window.event;
+				if(event.wheelDelta) {
+					delta = event.wheelDelta / 120;
+				} else if(event.detail) {
+					delta = -event.detail / 3;
+				}
+				if(delta)
+					handle(delta);
+				if(event.preventDefault)
+					event.preventDefault();
+				event.returnValue = false;
+			}
+
+			function navigate(dir) {
+				if(navigating)
+					return;
+				console.log("navigate: " + dir + ", idCur: " + idCur);
+				idPre = idCur;
+				idCur += Number(-1 * dir);
+				targY += (hj * dir);
+				navigating = true;
+				//targYPos -= 100;
+				$imgCur = $('div[data-id="' + idCur + '"]');
+				$imgPre = $('div[data-id="' + idPre + '"]');
+				$imgCur.stop(true, true).fadeTo("slow", 1.0);
+				$imgPre.stop(true, true).fadeTo('slow', 0.2);
+				$content = $('#content');
+
+				$content.animate({
+					top : targY,
+				}, {
+					duration : 700,
+					specialEasing : {
+						top : 'easeInOutQuint'
+					},
+					complete : function() {
+						navigating = false;
+					}
+				});
+
+			}
+
+			function wheel(event) {
+				var delta = 0;
+				if(!event)
+					event = window.event;
+				if(event.wheelDelta) {
+					delta = event.wheelDelta / 120;
+				} else if(event.detail) {
+					delta = -event.detail / 3;
+				}
+				if(delta)
+					handle(delta);
+				if(event.preventDefault)
+					event.preventDefault();
+				event.returnValue = false;
+			}
+
+			function roundNumber(num, dec) {
+				var result = Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
+				return result;
+			}
+
+			/* Initialization code. */
+
+			if(false) {
+				if(window.addEventListener) {
+					window.addEventListener('DOMMouseScroll', wheel, false);
+				}
+				window.onmousewheel = document.onmousewheel = wheel;
+			}
+		</script>
+		<!-- -->
+		<!--<link rel="stylesheet" type="text/css" href="/assets/js/fancybox/jquery.fancybox-1.3.4.css" media="screen" />-->
+	</head>
+	<body>
+		<!--
+		* -----------------------------------------------------------------------------------------------------
+		* -----------------------------------------------------------------------------------------------------
+		* Left-anchored: site navigation module
+		* & Right-anchored info display module
+		* Float vertically
+		* -----------------------------------------------------------------------------------------------------
+		* -----------------------------------------------------------------------------------------------------
+		-->
+		<!-- NOTE: cancel home deep link on non-hashable pages -->
+		<div id="logo">
+			<h1><a href="/">Olivier Theyskens</a></h1>
+		</div>
+		<div id="nav" class="col-edge">
+			<ul id="menu">
+				<li>
+					<a href="/" rel="address:/">Home</a>
+				</li>
+				<li>
+					<a href="/collections" rel="address:/collections">Collections</a>
+				</li>
+				<li>
+					<a href="/campaigns" rel="address:/campaigns">Campaigns</a>
+				</li>
+				<li>
+					<a href="/inspiration/">Inspiration</a>
+				</li>
+				<li>
+					<a href="/press">Press</a>
+				</li>
+				<li>
+					<a href="http://theyskenstheory.com" target="_blank">Shop</a>
+				</li>
+			</ul>
+		</div><!-- /#col-left -->
+		<!--
+		-----------------------------------------------------------------------------
+		-->
+		<div id="aux" class="col-edge">
+			<div id="aux-inner">
+				<div id="ttl">
+					Example of Post Title
+				</div>
+				<div id="share" class="sbttl">
+					<a href="#">SHARE</a>
+				</div>
+				<p>
+					Loren ipsum dolor vitae erat maruis an leo nulla secundo mia dia. Dolor sequit vitate pretum elit am an eusimod.
+				</p>
+				<div id="icons">
+					<ul>
+						<li id="icon-list"><img src="/assets/img/ui/single.png" />
+						</li>
+						<li id="icon-grid"><img src="/assets/img/ui/grid.png" />
+						</li>
+					</ul>
+				</div>
+				<div id="submenu">
+					<ul>
+						<li>
+							<a href="#">pre fall 2012</a>
+						</li>
+						<li>
+							<a href="#">spring / summer 2012
+						</li>
+						<li>
+							<a href="#"> fall / winter 2011</a>
+						</li>
+						<li>
+							<a href="#"> spring / summer 2011</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- END #container-outer -->
+		<!--
+		* ------------------------------------------------------------------------
+		* ------------------------------------------------------------------------
+		* Sections: Home, Collections,Campaigns and Maybe livestream
+		* ------------------------------------------------------------------------
+		* ------------------------------------------------------------------------
+		-->
+		<div id="mid">
+			<section id="content" role="main">
+<div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/image-10/ss12dlr_ny-theyskens-theorynew-york-2/" rel="attachment wp-att-68"><img src="http://theyskenstheory.dev/wp-content/uploads/LOOK16_SS12DLR_Theysken_230-600x900.jpg" alt="" title="SS12DLR_NY, Theyskens Theory,New York" width="600" height="900" class="alignnone size-large wp-image-68" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><iframe src="http://player.vimeo.com/video/31153671?title=0&amp;byline=0&amp;portrait=0" width="780" height="439" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe><p><a href="http://vimeo.com/31153671">Olivier Theyskens sketches</a> from <a href="http://vimeo.com/jinofrezal">Jean-Noël Frézal</a> on <a href="http://vimeo.com">Vimeo</a>.</p><p>[This is a Video Post]</p></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=39">Jan 31</a></h2><div class="post-content"><p>Semper euripidis ad est, has te omnis dolorem corpora. <a href="http://hi-res.net">Nostrud</a> principes no vel, an commune singulis inimicus sed. Quaestio sensibus an eum, in mel ullum aliquid, quaeque dissentias mei eu. Ius aperiam repudiare id, sumo brute ex mei. Mei no justo facilisi electram. Sed propriae consetetur ut, fastidii dignissim similique te mea, eu vis recteque consectetuer.</p><p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=38">Jan 31</a></h2><div class="post-content"><p>Te quando saperet delicatissimi vel, agam utroque vel ex. Ne denique interesset ullamcorper sit, delicata definitiones eu est. Quis suavitate eos ad, pro ad tibique singulis. Et ipsum saepe tincidunt mea, intellegebat conclusionemque cu sit. Laudem petentium accommodare usu at, lorem mundi mediocrem no eos, sit ne viris explicari. Vis et populo iuvaret, qui cu ferri invidunt. At mel dicit doming feugiat. Sit ad dolor ubique repudiandae, ut sea feugait oportere. Eam suscipit tacimates et. Splendide efficiantur et mea, sint vocibus eleifend sea cu, usu animal disputando ea. Dicat eripuit et eum.
+</b>
+Duo elit luptatum persequeris ea. Legendos cotidieque comprehensam eam at, ea inimicus laboramus nec, an consul antiopam gubergren qui. No labore reprehendunt sit. Ex per dignissim definiebas.</p>
+<p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=29">Jan 31</a></h2><div class="post-content"><p><a href="http://hi-res.net">#MostWanted</a> updated basics from <a href="http://hi-res.net">@Theory__ #theyskenstheory</a>, <a href="http://hi-res.net">@habitualdenim</a>, <a href="http://hi-res.net">@rag_bone</a>, <a href="http://hi-res.net">@StellaMcCartney</a>, and <a href="http://hi-res.net">@mihjeans</a>. <a href="http://hi-res.net">ow.ly/8Hqmh</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=15">Jan 30</a></h2><div class="post-content"><p>Awesome! What'd you snag? RT @RebekahGeorge Major sales @Bergdorfs today! Scored major deals from @vince @Theory__<!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/image-09/ss12dlr_ny-theyskens-theorynew-york/" rel="attachment wp-att-66"><img src="http://theyskenstheory.dev/wp-content/uploads/LOOK7_SS12DLR_Theysken_097-600x900.jpg" alt="" title="SS12DLR_NY, Theyskens Theory,New York" width="600" height="900" class="alignnone size-large wp-image-66" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/63/dsc_9228/" rel="attachment wp-att-64"><img src="http://theyskenstheory.dev/wp-content/uploads/DSC_9228-1100x732.jpg" alt="" title="DSC_9228" width="780" height="519" class="alignnone size-large wp-image-64" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><iframe src="http://player.vimeo.com/video/26745045?title=0&amp;byline=0&amp;portrait=0&amp;loop=1" width="780" height="585" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe><p>[This is a Video Post]</p></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=13">Jan 30</a></h2><div class="post-content"><p><a href="http://twitter.com/LEBARONFAMILY" rel="nofollow"><s>@</s>LEBARONFAMILY</a> NYC spot finally opened this weekend. We think it was worth the wait & we're not alone. More <a href="http://twitter.com/LEBARONFAMILY" rel="nofollow"><s>@</s>LEBARONFAMILY</a> <a href="http://bit.ly/x5NR4f" target="_blank">bit.ly/x5NR4f</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="post-content"><iframe src="http://player.vimeo.com/video/29111217?byline=0&amp;portrait=0&amp;color=ffffff" width="780" height="439" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe><p><a href="http://vimeo.com/29111217">ELLE + Theory</a> from <a href="http://vimeo.com/bilthompson">Bil Thompson</a> on <a href="http://vimeo.com">Vimeo</a>.</p><p>[This is a Video Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><iframe src="http://player.vimeo.com/video/24056751?title=0&amp;byline=0&amp;portrait=0" width="780" height="439" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe><p><a href="http://vimeo.com/24056751">Theyskens Theory - Fall Winter 2011/2012</a> from <a href="http://vimeo.com/sokakmood">sokakmood.com</a> on <a href="http://vimeo.com">Vimeo</a>.</p><p>[This is a Video Post]</p></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=37">Jan 30</a></h2><div class="post-content"><p>Ut facete deseruisse consetetur mea, at veri labores repudiandae mei. Quo ea etiam zril labitur. Error appareat dissentias cum ne, vis recusabo inciderint at, posidonium definitionem mel cu. At quis numquam partiendo sed. Ex mei ferri mutat nobis, repudiandae efficiantur an eam. Ex vim possit eligendi, nam maiestatis intellegebat at. <a href="http://hi-res.net">An graece iisque usu.</a>
+
+Erat invidunt convenire id mei, duo erat vulputate dissentiunt ne, malis velit contentiones ex eum. In essent deleniti placerat has, at quo quas platonem. Mollis consequuntur mel ei, accusam oportere persequeris sea eu, at pro ornatus salutatus consectetuer. An ius partem delenit necessitatibus.</p><p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=36">Jan 30</a></h2><div class="post-content"><p>Ut quo tota viris, usu ei novum nominavi comprehensam. Timeam omittantur et eum, te bonorum expetenda per, pri affert tation cu. Est summo fabulas ea, ei sit noster accommodare. Et debitis accumsan cum, no esse civibus verterem eum, est ut summo fierent. Decore nonumes perpetua ea qui, fuisset nominati salutatus te pro, ex apeirian reformidans cum. Vel epicuri pertinacia contentiones ex.
+
+Et usu enim <a href="http://hi-res.net">impetus legendos</a>, pri in liber essent. Mea agam facer periculis cu. Ad graeco eripuit vivendo cum. Dolorem senserit praesent et ius, in sit tacimates efficiendi. An erant vitae per, eu iriure constituto est. 
+Et vix scripserit adversarium, ex suscipit euripidis qui. No sit quidam vidisse. Solet detracto lucilius an nec, augue eruditi detraxit no mei. Ad vim cetero aperiam. Duo id referrentur instructior.
+
+Est inermis albucius in, ei ius facer aperiri. Dicat inani quo cu. Nam essent integre similique ut. <a href="http://hi-res.net">Eloquentiam</a> reformidans referrentur et sed. Ex aperiam aliquando eloquentiam quo.</p>
+<p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=28">Jan 30</a></h2><div class="post-content"><p><a href="http://hi-res.net">#TheyskensTheory</a> Spring 12 prony wauva pants featured in <a href="http://hi-res.net">@voguemagazine</a> "Not-so-basic basics" roundup. See more > <a href="http://hi-res.net">bit.ly/AlF5Yh</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=27">Jan 30</a></h2><div class="post-content"><p>Loving all the <a href="http://hi-res.net">@WhoWhatWear</a> outfit pics from Sundance, especially Rashida Jones in that chic <a href="http://hi-res.net">#TheyskensTheory</a> dress <a href="http://hi-res.net">> http://bit.ly/zTS7tI</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/image-07/olivier-with-girl/" rel="attachment wp-att-62"><img src="http://theyskenstheory.dev/wp-content/uploads/OLIVIER-WITH-GIRL-1100x619.jpg" alt="" title="OLIVIER WITH GIRL" width="780" height="438" class="alignnone size-large wp-image-62" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/image-06/_dsc8146/" rel="attachment wp-att-60"><img src="http://theyskenstheory.dev/wp-content/uploads/DSC8146-600x900.jpg" alt="" title="_DSC8146" width="600" height="900" class="alignnone size-large wp-image-60" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/image-05/theory_04b_102070_rt1_v1/" rel="attachment wp-att-58"><img src="http://theyskenstheory.dev/wp-content/uploads/THEORY_04B_102070_RT1_v1-894x900.jpg" alt="" title="THEORY_04B_102070_RT1_v1" width="780" height="785" class="alignnone size-large wp-image-58" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><iframe src="http://player.vimeo.com/video/29408778?title=0&amp;byline=0&amp;portrait=0" width="780" height="439" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe><p><a href="http://vimeo.com/29408778">CindiddyTV at Theysken's Theory NYFW SS12</a> from <a href="http://vimeo.com/cindiddy">CindiddyTV</a> on <a href="http://vimeo.com">Vimeo</a>.</p><p>[This is a Video Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><iframe src="http://player.vimeo.com/video/26745045?title=0&amp;byline=0&amp;portrait=0" width="780" height="585" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe><p><a href="http://vimeo.com/26745045">Theyskens' Theory Fall/Winter 2011-2012 Runway</a> from <a href="http://vimeo.com/theyskenstheory">Theyskens&#039; Theory</a> on <a href="http://vimeo.com">Vimeo</a>.</p><p>[This is a Video Post]</p></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=35">Jan 29</a></h2><div class="post-content"><p>Eu qui ignota denique prodesset, vis cetero minimum ut. Ex eam stet habemus singulis, pro deserunt splendide id. Ut vix nostrud omittantur. Ea vim porro mollis persecuti, minim melius id eam, in sea dicant imperdiet. Natum melius iudicabit eam ea. Mea agam facer periculis cu.</p><p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=34">Jan 29</a></h2><div class="post-content"><p>Eam an primis aeterno aperiri. Sea fastidii definiebas in. Te erat copiosae oporteat sea, voluptaria mediocritatem cu sed, augue omnes pro at. Ex quo alia adhuc semper. Adhuc nostrum nam ad, ei veritus delectus consectetuer nam. Mei stet cibo contentiones ei, mei at justo alterum.
+</b>
+Nam accusata mandamus ne, ei elitr appetere perfecto mei. Omnis everti gubergren eam ei, id timeam appareat omittantur usu. Nonumes adversarium mel te, eam et causae qualisque signiferumque, temporibus contentiones id est. Sea nisl indoctum intellegat ex. His nullam labore graeco et, posse etiam saepe sea ea, conceptam intellegat mei eu. At sit mutat elaboraret. Posse consul neglegentur qui ut, usu malis tritani referrentur ne, pri ea soluta facilisi. Has ad tation evertitur, quis dolore disputationi has cu.
+</p><p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=33">Jan 29</a></h2><div class="post-content"><p>Suas libris detracto pro id, fierent quaestio vis eu. Vix cu regione perpetua, cum cu mutat nostrum quaerendum, et per convenire cotidieque. Ne expetenda sententiae cum, ex eos dolorum docendi. Nam elitr iisque sententiae eu, his at oportere omittantur vituperatoribus. Eum et abhorreant intellegam, pri at integre sadipscing, has ad rebum clita reprimique. Pri in intellegam eloquentiam. Nihil consul vidisse mea ei. Et duo commodo impetus, an sed duis omittam. Ut dictas blandit nam, per ne idque patrioque temporibus, ea mei menandri quaestio sensibus. Tation moderatius est ei. No vix animal commodo quaestio. Per te debet <a href="http://hi-res.net">partiendo deterruisset</a>, populo tractatos at pro, viris nihil volumus te eos. Meis appellantur id duo, at quo alterum instructior. Tantas signiferumque eum ad, erat incorrupte in sed. Lucilius patrioque vis ut, no ius quis omnes intellegebat. Quo debet quaerendum disputationi ea.</p><p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=26">Jan 29</a></h2><div class="post-content"><p>Last chance to shop our online sale. 50% off ends Sunday. Shop the steals now > <a href="http://hi-res.net">http://bit.ly/xnUY7j http://pic.twitter.com/YAi2gBqD</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/image-04/b/" rel="attachment wp-att-56"><img src="http://theyskenstheory.dev/wp-content/uploads/b-1100x733.jpg" alt="" title="b" width="780" height="519" class="alignnone size-large wp-image-56" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/image-03/theyskens4/" rel="attachment wp-att-54"><img src="http://theyskenstheory.dev/wp-content/uploads/theyskens4-600x900.jpg" alt="" title="theyskens4" width="600" height="900" class="alignnone size-large wp-image-54" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=32">Jan 28</a></h2><div class="post-content"><p>Ex per falli putant regione. Eum an atqui senserit gloriatur. Tale noster intellegebat vis te, vel omnesque tractatos ad, te his perfecto expetenda. Ius at summo iudico salutatus. Usu tollit albucius et, elit dolor luptatum te nam, ubique discere tibique eu sit. Nonumes facilisi ex sed, illud graece feugait vis no. No mei inani nonumes. Mea audire eruditi periculis id, doming corpora vel et, quo in facer voluptua efficiendi. Detracto efficiantur et per, vix ex soleat forensibus. Vis in paulo mucius. Et mutat scripserit usu, mea soluta tincidunt definiebas ex.Cu iuvaret omnesque est, ad vide nihil pri, cum nonumy qualisque id. At sumo fabulas explicari eam. Mandamus adipiscing cu est. Ex agam vitae duo, quo esse everti te. Dolores reprehendunt mei et, mea at facer scriptorem. Ad nec simul constituam, ad albucius persecuti pro. Munere populo vis id, ne vis iudico nonumy evertitur. Mei ut legere doming probatus. Eos errem animal eripuit et, at nam prompta vituperata. In ius solet graeco eleifend, pri putant corpora nostrum eu, viris fierent instructior nam ut. Lorem ipsum dolor sit amet, ex solum utinam interpretaris duo. Est ad dicunt oportere eloquentiam, sit te quem tation epicuri. His ne verear tritani nominati. Nullam laoreet scripserit an sed. Case persecuti in pro, in wisi iisque has.Case accusam mentitum at est, eripuit praesent vis eu. Mel malorum dignissim te. Ius te summo nusquam. Odio etiam aeterno has at, sed aliquip erroribus intellegam ea, ei dolor omnesque interesset est.
+</b>
+Vel id incorrupte suscipiantur, in per solum debitis interesset. Eum postulant conclusionemque ea. Ius et solum tincidunt, ne est doming appetere dissentias. Alii natum no usu. No nam sanctus laoreet. Aeque legendos eloquentiam ei ius. Inani soluta dicunt his at, qui ut nisl solet. Est et habemus probatus, iriure habemus placerat eam ad, laudem scripta platonem id his. In sed sint nobis, ne labitur molestie usu. Ad ferri oportere sea, quo mutat illum nonumes ne, qui iusto legere alterum id. Nisl habeo affert nec cu, probo copiosae eleifend qui te, duis facilis ad quo. Ea cetero quaeque mel, mel melius iriure fabellas ne, pro ad eripuit tractatos mnesarchum.
+</b>
+Ad assum dicunt possim ius, ea falli consectetuer has, vix no postulant dissentiunt. Sit te posse habemus instructior. Detraxit oportere complectitur no sed, pri tale soleat voluptua ea, labore scripta tamquam est ex. Utinam habemus cotidieque ei pro, et dicit alterum his, iriure appellantur no sed. Ut inciderint complectitur quo, vim et reque suavitate. Amet idque appareat et vel. Lorem ipsum dolor sit amet, ex solum utinam interpretaris duo. Est ad dicunt oportere eloquentiam, sit te quem tation epicuri. His ne verear tritani nominati. Nullam laoreet scripserit an sed. Case persecuti in pro, in wisi iisque has. Case accusam mentitum at est, eripuit praesent vis eu. Mel malorum dignissim te. Ius te summo nusquam. Odio etiam aeterno has at, sed aliquip erroribus intellegam ea, ei dolor omnesque interesset est. Vel id incorrupte suscipiantur, in per solum debitis interesset. Eum postulant conclusionemque ea. Ius et solum tincidunt, ne est doming appetere dissentias. Alii natum no usu.Est et habemus probatus, iriure habemus placerat eam ad, laudem scripta platonem id his. In sed sint nobis, ne labitur molestie usu. Ad ferri oportere sea, quo mutat illum nonumes ne, qui iusto legere alterum id. Nisl habeo affert nec cu, probo copiosae eleifend qui te, duis facilis ad quo. Ea cetero quaeque mel, mel melius iriure fabellas ne, pro ad eripuit tractatos mnesarchum. Ad assum dicunt possim ius, ea falli consectetuer has, vix no postulant dissentiunt. Sit te posse habemus instructior. Detraxit oportere complectitur no sed, pri tale soleat voluptua ea, labore scripta tamquam est ex. Utinam habemus cotidieque ei pro, et dicit alterum his, iriure appellantur no sed. Ut inciderint complectitur quo, vim et reque suavitate. Amet idque appareat et vel.</p><p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=31">Jan 28</a></h2><div class="post-content"><p>Nam no cibo melius. Eum affert sanctus cu, probo delectus theophrastus te pri. In pro alia eros causae, ius an hinc option. <a href="http://hi-res.net">Eros nominavi vis ut.</a> Sea ut summo oblique, dissentias voluptatibus eu sed, ne alia rebum assum eos.
+
+At iuvaret ceteros accommodare sea, vel te ferri scripta. Posse inciderint sit id, affert officiis ea per. Pericula accommodare ad sit, nibh reprehendunt vim ad, ut cetero albucius adipiscing vel. Errem veniam ocurreret nam ut, probo dissentias ad eos, usu sonet patrioque id. Usu ad moderatius comprehensam, duo recusabo iracundia ne. In mel imperdiet deseruisse, vidisse copiosae ei eum, mea ignota voluptua petentium eu. Pri te reque primis expetenda.</P<p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=25">Jan 28</a></h2><div class="post-content"><p>FROM THE ARCHIVES, An exclusive sketch by Olivier Theyskens from his first <a href="http://hi-res.net">#TheyskensTheory</a> collection, Spring 2011. <a href="http://hi-res.net">http://pic.twitter.com/a1j2AeN8</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=24">Jan 28</a></h2><div class="post-content"><p>It's true! RT <a href="http://hi-res.net">@rachelstrugatz <a href="http://hi-res.net">@mcpr</a> <a href="http://hi-res.net">@manrepeller</a> <a href="http://hi-res.net">@AnnieLadino</a></a> please tell me @ShopItToMe added #TheyskensTheory to its brands! <a href="http://hi-res.net">#win</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=23">Jan 28</a></h2><div class="post-content"><p>Our colorful spring pieces will brighten up your neutral winter wardrobe, & your Monday.Shop here><a href="http://hi-res.net">http://bit.ly/z6D5WK http://pic.twitter.com/5EJtB41A</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/image-02/theyskens6/" rel="attachment wp-att-52"><img src="http://theyskenstheory.dev/wp-content/uploads/theyskens6-600x900.jpg" alt="" title="theyskens6" width="600" height="900" class="alignnone size-large wp-image-52" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="post-content"><a href="http://theyskenstheory.dev/inspiration/image-01/theyskens5/" rel="attachment wp-att-50"><img src="http://theyskenstheory.dev/wp-content/uploads/theyskens5-600x900.jpg" alt="" title="theyskens5" width="600" height="900" class="alignnone size-large wp-image-50" /></a><p>[This is an Image Post]</p></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=30">Jan 27</a></h2><div class="post-content"><p>Lorem ipsum dolor sit amet, ea mei idque libris. Sed ex ridens eleifend, molestie postulant petentium ei est, duo sonet saepe sanctus cu. Usu ei amet luptatum voluptatibus, eos ei tota qualisque. Duo congue similique temporibus ex, cum ea nibh audire. Pri dicit prompta ex, at vim vidisse nostrud. Mei mollis dissentias ei, qui quas molestie id. Nec laudem propriae pertinax ad, ad vix illum melius, sea et oratio salutandi.</p><p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=22">Jan 27</a></h2><div class="post-content">Awesome! What'd you snag? RT <a href="http://hi-res.net">@RebekahGeorge</a> Major sales <a href="http://hi-res.net">@Bergdorfs</a> today! Scored major deals from <a href="http://hi-res.net">@vince</a> & <a href="http://hi-res.net">@Theory__</a>.<p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=21">Jan 26</a></h2><div class="post-content"><p><a href="http://hi-res.net">@LEBARONFAMILY</a> NYC spot finally opened this weekend. We think it was worth the wait & we're not alone. More <a href="http://hi-res.net">@EaterNY > bit.ly/x5NR4f</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=20">Jan 26</a></h2><div class="post-content"><p>Amazing remix of one of our favorite <a href="http://hi-res.net">@Lykkeliofficial</a> songs "I Follow Rivers (The Magician Remix)" Listen> <a href="http://hi-res.net">http://bit.ly/zKH96P #MusicMonday</a><!--[not filtered]--></p><p>[This is a Twitter Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=16">Jan 24</a></h2><div class="post-content"><p>Morbi non erat non ipsum pharetra tempus. Donec orci. Proin in ante. Pellentesque sit amet <a href="http://hi-res.net/" target="_blank">purus</a>. Cras egestas diam sed ante. Etiam imperdiet urna sit amet risus. Donec ornare arcu id erat. Aliquam ultrices scelerisque sem. In elit nulla, molestie vel, ornare sit amet, interdum vel, mauris. Etiam dignissim imperdiet metus.</p>
+<p>Proin in ante. Pellentesque sit amet purus. Cras <a href="http://hi-res.net/" target="_blank">egestas</a> diam sed ante. Etiam imperdiet urna sit amet risus. Donec ornare arcu id erat. Aliquam <a href="http://hi-res.net/" target="_blank">ultrices</a> scelerisque sem. In elit nulla, molestie vel, ornare sit amet, interdum vel, mauris. Etiam dignissim imperdiet metus.</p><p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=1">Jan 21</a></h2><div class="post-content">This is an example of a really short raw text post that's uncategorized.<p>[This is a Raw Text Post]</p></div></div></div><!-- /.post --><div class="post"><div class="txt"><h2 class="post-title"><a href="http://theyskenstheory.dev/?p=17">Dec 12</a></h2><div class="post-content"><p>Morbi non erat non ipsum pharetra tempus. Donec orci. Proin in ante. Pellentesque sit amet <a href="http://hi-res.net/" target="_blank">purus</a>. Cras egestas diam sed ante. Etiam imperdiet urna sit amet risus. Donec ornare arcu id erat. Aliquam ultrices scelerisque sem. In elit nulla, molestie vel, ornare sit amet, interdum vel, mauris. Etiam dignissim imperdiet metus.</p>
+<p>Proin in ante. Pellentesque sit amet purus. Cras <a href="http://hi-res.net/" target="_blank">egestas</a> diam sed ante. Etiam imperdiet urna sit amet risus. Donec ornare arcu id erat. Aliquam <a href="http://hi-res.net/" target="_blank">ultrices</a> scelerisque sem. In elit nulla, molestie vel, ornare sit amet, interdum vel, mauris. Etiam dignissim imperdiet metus.</p><p>[This is a Raw Text Post]</p></div></div></div><!-- /.post -->
+</section><!-- #main -->		</div>
+		<div id="col-fullscreen-container" class="channel-container">
+			<div id="col-fullscreen">
+				<div id="section-splash">
+					<div id="col-fullscreen-inner">
+						<div id="fs-splash-img"></div>
+					</div>
+					<div id="fs-txt-container">
+						<div id="fs-txt">
+							<h2> Fashion Week</h2>
+							<h1>Olivier theyskens SS 2012 SHOW
+							Live from NYC 12feb, 20:30 EST </h1>
+							<h3><a href="/the-show/">Watch the Show</a> | <a href="/home" rel="address:/home">Enter the Website</a></h3>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="foot">
+			<ul>
+				<li>
+					<a href="https://www.facebook.com/theory?sk=app_191216324225619" target="_blank">FB</a>
+				</li>
+				<li>
+					<a href="https://twitter.com/#!/theory__" target="_blank">TW</a>
+				</li>
+				<li>
+					<a href="http://pinterest.com/theyskenstheory/" target="_blank">PIN</a>
+				</li>
+			</ul>
+		</div>
+		<!-- END #section-footer -->
+	</body>
+</html>

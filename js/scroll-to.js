@@ -9,7 +9,7 @@
 (function(){
   window.sn = {
     easing : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
-    scrollDuration : 550,
+    scrollDuration : 350,
     scrollEndDelay : 120
   };
 }());
@@ -223,7 +223,7 @@
 }());
 
 $(function(){
-  sn.init("#pane .section");
-  sn.initEvents();
+  // sn.init("#pane .post");
+  // sn.initEvents();
   // sn.initObservers();
 });
