@@ -102,31 +102,41 @@
   }
 
   function scroll(el){
-    el.parent().scrollTo(offBy(el))
+    el.parent().scrollTo(offBy(el));
     return el;
   }
 
   function offBy(el){
     var elTop = $(el).offset().top - $(el).parent().offset().top,
-    elH   = $(el).outerHeight(),
-    top   = $(window).scrollTop();
-    cen   = top + $(window).height()/2;
+        elH   = $(el).outerHeight(),
+        top   = $(window).scrollTop(),
+        cen   = top + $(window).height()/2;
 
     return parseInt(cen - elTop - (elH/2), 10);
   }
 
   function inCenter(el){
     var elTop = $(el).offset().top,
-    elH   = $(el).outerHeight(),
-    top   = $(window).scrollTop();
-    cen   = top + $(window).height()/2;
+        elH   = $(el).outerHeight(),
+        top   = $(window).scrollTop(),
+        cen   = top + $(window).height()/2;
 
     return elTop <= cen && (elTop + elH) > cen;
   }
 
-  // FIXME find nearest not collection[0]
+  function headsOrTails(){
+    var top   = $(window).scrollTop(),
+        col   = collection().toArray(),
+        head  = $(col.shift()),
+        tail  = $(col.pop());
+
+    if(top < head.offset().top){ return head; }
+    if(top > tail.offset().top){ return tail; }
+    throw "Could not find element";
+  }
+
   function find(){
-    return select($(_.find(collection(), inCenter) || collection()[0]));
+    return select($(_.find(collection(), inCenter) || headsOrTails()));
   }
 
   function deferResize(){
