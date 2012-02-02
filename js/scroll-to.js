@@ -7,9 +7,8 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (function(){
-  var timer;
 
-  // iOS generates an awful jitter since the elements by off by a fraction and never sync
+  // iOS generates an awful jitter since the elements can be off by a fraction
   // TODO this might not be needed anymore
   function veryNear(top){
     var elT = $(window).scrollTop();
@@ -21,7 +20,7 @@
   }
 
   function scroll(el, top){
-    if(veryNear(top)){ return true; }
+    if(veryNear(top)){ return el; }
 
     $("html, body").stop().animate(
       { scrollTop : top},
@@ -30,14 +29,11 @@
         complete  : function(){el.trigger("sn:locked");}
       });
 
-    return true;
+    return el;
   }
 
-  $.fn.scrollTo = function(top, options){
-    var self = this;
-    clearTimeout(timer);
-    timer = setTimeout(function(){scroll(self, top);}, 10);
-    return this;
+  $.fn.scrollTo = function(top){
+    return scroll(this,top);
   };
 
 }());
@@ -46,7 +42,6 @@
 
   var timer, selector;
 
-  // FIXME browser refresh does not always go to the correct item
   function init($selector){
     selector   = $selector;
     $(window).resize(deferResize);
@@ -86,8 +81,7 @@
   }
 
   function scroll(el){
-    el.scrollTo(offBy(el));
-    return el;
+    return el.scrollTo(offBy(el));
   }
 
   function dim(el){
@@ -101,7 +95,7 @@
 
   function offBy(el){
     var d = dim(el);
-    return parseInt(d.elTop - d.mid + (d.elH/2));
+    return parseInt(d.elTop - d.mid + (d.elH/2),10);
   }
 
   function inCenter(el){
