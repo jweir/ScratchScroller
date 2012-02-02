@@ -7,6 +7,7 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (function(){
+  // TODO remove this code and have these defaults elsewhere
   window.sn = {
     easing : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
     scrollDuration : 350,
@@ -47,12 +48,17 @@
 }());
 
 (function(){
+  $.fn.scrollLock = function(options){
+    _.extend(sn, options || {});
+    return init(this);
+  }
   //Scroll controller
   var timer, selector;
 
   function init($selector){
     selector = $selector;
     $(window).resize(deferResize);
+    sn.initEvents();
     return set(find());
   }
 
