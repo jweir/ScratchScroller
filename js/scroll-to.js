@@ -12,7 +12,7 @@
   // TODO this might not be needed anymore
   function veryNear(top){
     var elT = $(window).scrollTop();
-    if(! isNaN(elT) && Math.abs(Math.abs(elT) - Math.abs(top)) < 2){
+    if(Math.abs(Math.abs(elT) - Math.abs(top)) < 2){
       return true;
     } else {
       return false;
@@ -43,7 +43,7 @@
   var timer, selector;
 
   function init($selector){
-    selector   = $selector;
+    selector = $selector;
     $(window).resize(deferResize);
     return set(find());
   }
