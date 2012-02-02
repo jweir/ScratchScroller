@@ -7,6 +7,14 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (function(){
+  window.sn = {
+    easing : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
+    scrollDuration : 550,
+    scrollEndDelay : 100
+  };
+}());
+
+(function(){
 
   // iOS generates an awful jitter since the elements can be off by a fraction
   // TODO this might not be needed anymore
@@ -24,8 +32,8 @@
 
     $("html, body").stop().animate(
       { scrollTop : top},
-      { easing    : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
-        duration  : 550,
+      { easing    : sn.easing,
+        duration  : sn.scrollDuration,
         complete  : function(){el.trigger("sn:locked");}
       });
 
@@ -125,7 +133,7 @@
   }
 
   // public functions
-  window.sn = {
+  _.extend(window.sn, {
     init       : init,
     collection : collection,
     set        : set,
@@ -134,7 +142,7 @@
     find       : find,
     refresh    : refresh,
     offset     : offBy
-  };
+  });
 
 }());
 
@@ -149,7 +157,7 @@
   function onScroll(e){
     sn.find();
     clearTimeout(timer);
-    timer = setTimeout(scrollEnd,300);
+    timer = setTimeout(scrollEnd,sn.scrollEndDelay);
     return true;
   }
 
