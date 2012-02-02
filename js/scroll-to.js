@@ -39,7 +39,7 @@
 }());
 
 (function(){
-
+  //Scroll controller
   var timer, selector;
 
   function init($selector){
@@ -140,7 +140,6 @@
 
 (function(){
   // Scroll event handling
-
   var timer;
 
   function scrollEnd(){
