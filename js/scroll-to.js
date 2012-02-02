@@ -10,6 +10,7 @@
   var timer;
 
   // iOS generates an awful jitter since the elements by off by a fraction and never sync
+  // TODO this might not be needed anymore
   function veryNear(top){
     var elT = $(window).scrollTop();
     if(! isNaN(elT) && Math.abs(Math.abs(elT) - Math.abs(top)) < 2){
@@ -19,21 +20,23 @@
     }
   }
 
-  function scroll(top){
+  function scroll(el, top){
     if(veryNear(top)){ return true; }
 
     $("html, body").stop().animate(
-      { scrollTop      : top},
-      { easing   : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
-        duration : 550
+      { scrollTop : top},
+      { easing    : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
+        duration  : 550,
+        complete  : function(){el.trigger("sn:locked");}
       });
 
     return true;
   }
 
   $.fn.scrollTo = function(top, options){
+    var self = this;
     clearTimeout(timer);
-    timer = setTimeout(function(){scroll(top);}, 10);
+    timer = setTimeout(function(){scroll(self, top);}, 10);
     return this;
   };
 
@@ -41,8 +44,7 @@
 
 (function(){
 
-  var timer,
-  selector;
+  var timer, selector;
 
   // FIXME browser refresh does not always go to the correct item
   function init($selector){
@@ -180,10 +182,12 @@
 
   function enter(){}
   function exit(){}
+  function locked(){}
 
   function init(){
     $("#pane").delegate(".section", "sn:exit", exit);
     $("#pane").delegate(".section", "sn:enter", enter);
+    $("#pane").delegate(".section", "sn:locked", locked);
   }
 
   sn.initObservers = init;
