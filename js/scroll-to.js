@@ -11,7 +11,7 @@
   window.sn = {
     easing : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
     scrollDuration : 350,
-    scrollEndDelay : 120
+    scrollEndDelay : 10
   };
 }());
 
@@ -31,8 +31,8 @@
   function scroll(el, top){
     if(veryNear(top)){ return el; }
 
-    $("html, body").stop().animate(
-      { scrollTop : top},
+    $(el).parent().stop().animate(
+      { top : -1 * top},
       { easing    : sn.easing,
         duration  : sn.scrollDuration,
         complete  : function(){el.trigger("sn:locked");}
@@ -46,6 +46,36 @@
   };
 
 }());
+(function(){
+
+  var pillar;
+
+  function init(el){
+    pillar = $("<div>&nbsp;</div>");
+    pillar.css({
+      height   : el.outerHeight(true),
+      position : 'absolute',
+      zIndex   : 1,
+      top      : '0px',
+      width    : '20px',
+      visibility: 'none'
+    });
+
+    el.css({
+      position : "fixed",
+      left     : el.offset().left,
+      top      : el.offset().top
+    });
+
+    el.parent().append(pillar);
+    return pillar;
+  }
+
+  window.sn.proto = {
+    init : init
+  }
+
+})();
 
 (function(){
   $.fn.scrollLock = function(options){
@@ -57,6 +87,7 @@
 
   function init($selector){
     selector = $selector;
+    sn.proto.init(collection().parent());
     $(window).resize(deferResize);
     sn.initEvents();
     return set(find());
@@ -100,7 +131,7 @@
 
   function dim(el){
     return {
-      elTop : $(el).offset().top,
+      elTop : $(el).position().top,
       elH   : $(el).outerHeight(),
       top   : $(window).scrollTop(),
       mid   : $(window).height()/2
@@ -124,8 +155,8 @@
         head  = $(col.shift()),
         tail  = $(col.pop());
 
-    if(top < head.offset().top){ return head; }
-    if(top > tail.offset().top){ return tail; }
+    if(top < head.position().top){ return head; }
+    if(top > tail.position().top){ return tail; }
     throw "Could not find element";
   }
 
@@ -154,13 +185,16 @@
 
 (function(){
   // Scroll event handling
-  var timer;
+  var timer, scrollStart = 0;
 
   function scrollEnd(){
+    var now = $(window).scrollTop();
+    scrollStart = now;
     return sn.set(sn.find());
   }
 
   function onScroll(e){
+    var now = $(window).scrollTop();
     sn.find();
     clearTimeout(timer);
     timer = setTimeout(scrollEnd,sn.scrollEndDelay);
@@ -206,7 +240,7 @@
   var timer, now, log = [];
 
   function scrollEnd(){
-    console.log(_.max(log), _.min(log));
+    console.log(log.length, _.max(log), _.min(log));
     now = null;
     log = [];
   }
@@ -232,4 +266,5 @@ $(function(){
   // sn.init("#pane .post");
   // sn.initEvents();
   // sn.initObservers();
+  sn.initDiagnostics();
 });
