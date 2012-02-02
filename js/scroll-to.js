@@ -21,7 +21,9 @@
     sn.halt(function(){
       $(self).css({top:0});
       $(window).scrollTop(y -x);
-    })
+    });
+
+    return this;
   }
 
   // iOS generates an awful jitter since the elements by off by a fraction and never sync
@@ -30,7 +32,7 @@
     if(! isNaN(elT) && Math.abs(Math.abs(elT) - Math.abs(top)) < 2){
       return true;
     } else {
-      return false
+      return false;
     }
   }
 
@@ -50,7 +52,7 @@
   $.fn.scrollTo = function(top, options){
     var self = this;
     clearTimeout(timer);
-    timer = setTimeout(function(){scroll(self,top)}, 10);
+    timer = setTimeout(function(){scroll(self,top);}, 10);
 
     return this;
   };
@@ -94,9 +96,9 @@
     if(el.hasClass("active")){ return el;}
 
     el.addClass("active").trigger("sn:enter");
-    sn.collection().parent().find(".active").not(el)
-      .removeClass("active")
-      .trigger("sn:exit");
+    sn.collection().parent().find(".active").not(el).
+      removeClass("active").
+      trigger("sn:exit");
 
     return el;
   }
@@ -177,7 +179,7 @@
   window.sn.toggle = function(state){
     enabled = state;
     return enabled;
-  }
+  };
 
   function scrollEnd(){
     return sn.set(sn.find());
@@ -199,6 +201,7 @@
     switch(e.keyCode){
       case 38: sn.prev(); break; // up arrow
       case 40: sn.next(); break; // down arrow
+      default: break;
     }
     return true;
   }
@@ -228,6 +231,6 @@
 
 $(function(){
   sn.init("#pane .section");
-  sn.initEvents()
+  sn.initEvents();
   // sn.initObservers();
 });
