@@ -185,16 +185,13 @@
 
 (function(){
   // Scroll event handling
-  var timer, scrollStart = 0;
+  var timer;
 
   function scrollEnd(){
-    var now = $(window).scrollTop();
-    scrollStart = now;
     return sn.set(sn.find());
   }
 
   function onScroll(e){
-    var now = $(window).scrollTop();
     sn.find();
     clearTimeout(timer);
     timer = setTimeout(scrollEnd,sn.scrollEndDelay);
@@ -266,5 +263,5 @@ $(function(){
   // sn.init("#pane .post");
   // sn.initEvents();
   // sn.initObservers();
-  sn.initDiagnostics();
+  // sn.initDiagnostics();
 });

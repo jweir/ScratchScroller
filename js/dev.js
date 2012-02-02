@@ -17,9 +17,9 @@
 
   function init(){
     $(main+" "+item).scrollLock({
-      easing: "easeOutExpo",
-      scrollDuration : 850,
-      scrollEndDelay : 220
+      easing: "easeInOutQuint",
+      scrollDuration : 700,
+      scrollEndDelay : 100
     });
 
     $(main).on("sn:exit", item, exit);
