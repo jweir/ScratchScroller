@@ -11,7 +11,7 @@
   window.sn = {
     easing : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
     scrollDuration : 350,
-    scrollEndDelay : 10
+    scrollEndDelay : 10     // timeout before the scroll animation starts, set to false to fire instantly
   };
 }());
 
@@ -46,6 +46,7 @@
   };
 
 }());
+
 (function(){
 
   var pillar;
@@ -75,7 +76,7 @@
     init : init
   }
 
-})();
+}());
 
 (function(){
   $.fn.scrollLock = function(options){
@@ -193,8 +194,13 @@
 
   function onScroll(e){
     sn.find();
-    clearTimeout(timer);
-    timer = setTimeout(scrollEnd,sn.scrollEndDelay);
+    if(sn.scrollEndDelay){
+      clearTimeout(timer);
+      timer = setTimeout(scrollEnd,sn.scrollEndDelay);
+    } else {
+      scrollEnd();
+    }
+
     return true;
   }
 

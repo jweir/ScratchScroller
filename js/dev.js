@@ -1,6 +1,6 @@
 (function(){
 
-  var main = "#pane", // the parent id of the element holding the posts
+  var main = "#content", // the parent id of the element holding the posts
       item = ".post"; // the selector for individual blocks
 
   // Stop videos (Vimeo only)
@@ -17,9 +17,9 @@
 
   function init(){
     $(main+" "+item).scrollLock({
-      easing: "easeInOutQuint",
+      easing: "easeOutQuad",
       scrollDuration : 700,
-      scrollEndDelay : 100
+      scrollEndDelay : false
     });
 
     $(main).on("sn:exit", item, exit);
@@ -27,11 +27,5 @@
     // $(main).on("sn:locked", item, locked);
   }
 
-  // Just used for development
-  function load(){
-    var url = "inspiration.html #content .post";
-    $(main).load(url, init);
-  }
-
-  $(load);
-})();
+  $(init);
+}());
