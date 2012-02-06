@@ -15,6 +15,16 @@
     $("#legend").hide().html($(this).find("p").html()).fadeIn();
   }
 
+  // Turn off the scroll event
+  function locked(){
+    sn.toggle(false)
+    setTimeout(function(){ sn.toggle(true);}, 500);
+  }
+
+  var mouseIn = true;
+  $("body").on("mouseleave", function(){ mouseIn = false})
+  $("body").on("mouseenter", function(){ mouseIn = false})
+
   function init(){
     $(main+" "+item).scrollLock({
       easing: "easeOutQuad",
@@ -24,7 +34,7 @@
 
     $(main).on("sn:exit", item, exit);
     $(main).on("sn:enter", item, enter);
-    // $(main).on("sn:locked", item, locked);
+    $(main).on("sn:enter", item, locked);
   }
 
   $(init);

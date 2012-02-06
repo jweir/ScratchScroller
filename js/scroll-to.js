@@ -186,10 +186,21 @@
 
 (function(){
   // Scroll event handling
-  var timer;
+  var timer, scrollTop;
 
   function scrollEnd(){
     return sn.set(sn.find());
+  }
+
+  sn.toggle  = function(s){
+    if(s){
+      $(window).scrollTop(scrollTop);
+      $(window).on("scroll",onScroll);
+    } else {
+      scrollTop = $(window).scrollTop();
+      $(window).off("scroll");
+    }
+    return sn;
   }
 
   function onScroll(e){
