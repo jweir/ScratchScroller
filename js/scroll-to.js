@@ -100,11 +100,25 @@
 
   // TODO (minor) next & prev should just scroll to those elements
   function next(){
-    return set(select(find().next()));
+    var el = find().next();
+    if(el){
+      var t = $(window).scrollTop();
+      $(window).scrollTop(t + el.height());
+      return el;
+    } else {
+      return find();
+    }
   }
 
   function prev(){
-    return set(select(find().prev()));
+    var el = find().prev();
+    if(el){
+      var t = $(window).scrollTop();
+      $(window).scrollTop(t - el.height());
+      return el;
+    } else {
+      return find();
+    }
   }
 
   function collection(){
@@ -261,7 +275,7 @@
 
   function onScroll(e){
     var n = new Date();
-    if(now !== null) log.push(n - now);
+    if(now !== null) { log.push(n - now); }
     now = n;
     clearTimeout(timer);
     timer = setTimeout(scrollEnd,sn.scrollEndDelay);
