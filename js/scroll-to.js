@@ -84,6 +84,7 @@
     refresh : refresh
   }
 
+
 }());
 
 (function(){
@@ -106,6 +107,8 @@
     sn.proto.refresh();
     return set(find());
   }
+
+  $(window).bind("sn:refresh", refresh);
 
   // TODO (minor) next & prev should just scroll to those elements
   function next(){

@@ -1,7 +1,13 @@
 (function(){
 
+  // IMPORTANT
+  // when elements are added, removed or dimensions change
+  // an 'sn:refresh' event must be trigger
+  // $('body').trigger('sn:refresh') will work
+
   var main = "#content", // the parent id of the element holding the posts
       item = ".post"; // the selector for individual blocks
+
 
   // Stop videos (Vimeo only)
   // ensure http://a.vimeocdn.com/js/froogaloop2.min.js
