@@ -12,11 +12,16 @@
     easing : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
     scrollDuration : 350,
     scrollEndDelay : 10,    // timeout before the scroll animation starts, set to false to fire instantly
-    mousewheel     : false
+    mousewheel     : false,
+    locking        : false
   };
 }());
 
 (function(){
+
+  $.fn.scrollTo = function(top){
+    return scroll(this,top);
+  };
 
   // iOS generates an awful jitter since the elements can be off by a fraction
   // TODO this might not be needed anymore
@@ -41,10 +46,6 @@
 
     return el;
   }
-
-  $.fn.scrollTo = function(top){
-    return scroll(this,top);
-  };
 
 }());
 
@@ -93,6 +94,7 @@
     _.extend(sn, options || {});
     return init(this.selector);
   }
+
   //Scroll controller
   var timer, selector;
 
@@ -162,12 +164,19 @@
   function select(el){
     if(el.hasClass("active")){ return el;}
 
+    if(sn.locking){ locked(); }
     el.addClass("active").trigger("sn:enter");
     sn.collection().parent().find(".active").not(el).
       removeClass("active").
       trigger("sn:exit");
 
     return el;
+  }
+
+  // Turn off the scroll event
+  function locked(){
+    sn.toggle(false)
+    setTimeout(function(){ sn.toggle(true);}, 500);
   }
 
   function scroll(el){
@@ -236,7 +245,7 @@
     return sn.set(sn.find());
   }
 
-  sn.toggle  = function(s){
+  sn.toggle = function(s){
     if(s){
       $(window).scrollTop(scrollTop);
       $(window).on("scroll",onScroll);
