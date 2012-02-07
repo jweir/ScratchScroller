@@ -75,7 +75,7 @@
 
   function refresh(){
     pillar.css({
-      height   : anchor.outerHeight(true),
+      height   : anchor.outerHeight(true)
     });
   }
 
