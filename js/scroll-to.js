@@ -81,7 +81,7 @@
 (function(){
   $.fn.scrollLock = function(options){
     _.extend(sn, options || {});
-    return init(this);
+    return init(this.selector);
   }
   //Scroll controller
   var timer, selector;
