@@ -7,14 +7,21 @@
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 (function(){
-  // TODO remove this code and have these defaults elsewhere
+  // Events
+  // sn:refresh trigger when contents are added/removed or resized
+  // sn:enter when an element comes into the center
+  // sn:exit when an element leaves the center
+  // sn:locked when an element is in the center and stopped
+
+  // Options
   window.sn = {
     easing : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
     scrollDuration : 350,
     scrollEndDelay : 10,    // timeout before the scroll animation starts, set to false to fire instantly
     mousewheel     : false,
     locking        : false
-  };
+  }
+
 }());
 
 (function(){
