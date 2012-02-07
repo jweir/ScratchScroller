@@ -8,22 +8,6 @@
   var main = "#content", // the parent id of the element holding the posts
       item = ".post"; // the selector for individual blocks
 
-  function bindMouseWheel(){
-    $('body').bind('mousewheel', function(event, delta) {
-      if(Math.abs(delta) % 1 > 0){ // Probably a trackpad
-        console.log("trackpad")
-        return true
-      }
-      // disable, then renable the mousehweel in 1/2 a second
-      $('body').off('mousewheel');
-      setTimeout(bindMouseWheel, 500);
-
-      var x = ( delta < 0  ) ? sn.next() : sn.prev();
-      event.preventDefault();
-      return false;
-    });
-  }
-
   // Stop videos (Vimeo only)
   // ensure http://a.vimeocdn.com/js/froogaloop2.min.js
   function exit(){
@@ -50,14 +34,14 @@
     $(main+" "+item).scrollLock({
       easing: "easeOutQuad",
       scrollDuration : 700,
-      scrollEndDelay : false
+      scrollEndDelay : false,
+      mousewheel     : true
     });
 
     $(main).on("sn:exit", item, exit);
     $(main).on("sn:enter", item, enter);
     $(main).on("sn:enter", item, locked);
 
-    bindMouseWheel();
   }
 
   $(init);

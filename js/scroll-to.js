@@ -11,7 +11,8 @@
   window.sn = {
     easing : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
     scrollDuration : 350,
-    scrollEndDelay : 10     // timeout before the scroll animation starts, set to false to fire instantly
+    scrollEndDelay : 10,    // timeout before the scroll animation starts, set to false to fire instantly
+    mousewheel     : false
   };
 }());
 
@@ -100,7 +101,24 @@
     sn.proto.init(collection().parent());
     $(window).resize(deferResize);
     sn.initEvents();
+    if(sn.mousewheel){ bindMouseWheel();}
     return set(find());
+  }
+
+  function bindMouseWheel(){
+    $('body').bind('mousewheel', function(event, delta) {
+      if(Math.abs(delta) % 1 > 0){ // Probably a trackpad
+        console.log("trackpad")
+        return true
+      }
+      // disable, then renable the mousehweel in 1/2 a second
+      $('body').off('mousewheel');
+      setTimeout(bindMouseWheel, 500);
+
+      var x = ( delta < 0  ) ? sn.next() : sn.prev();
+      event.preventDefault();
+      return false;
+    });
   }
 
   function refresh(){
