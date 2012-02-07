@@ -49,10 +49,11 @@
 
 (function(){
 
-  var pillar;
+  var pillar, anchor;
 
   function init(el){
-    pillar = $("<div>&nbsp;</div>");
+    anchor = el;
+    pillar = pillar || $("<div>&nbsp;</div>");
     pillar.css({
       height   : el.outerHeight(true),
       position : 'absolute',
@@ -72,8 +73,15 @@
     return pillar;
   }
 
+  function refresh(){
+    pillar.css({
+      height   : anchor.outerHeight(true),
+    });
+  }
+
   window.sn.proto = {
-    init : init
+    init    : init,
+    refresh : refresh
   }
 
 }());
@@ -95,6 +103,7 @@
   }
 
   function refresh(){
+    sn.proto.refresh();
     return set(find());
   }
 
