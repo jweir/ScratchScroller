@@ -22,7 +22,14 @@
     $("body").on("sn:exit", ".post", exit);
     $("body").on("sn:enter",".post", enter);
 
-    $(".post").scrollLock({
+    $("#content .post").scrollLock({
+      easing         : "easeOutQuad",
+      scrollDuration : 700,
+      scrollEndDelay : false,
+      mousewheel     : true,
+      locking        : true
+    });
+    $("#content-z .post").scrollLock({
       easing         : "easeOutQuad",
       scrollDuration : 700,
       scrollEndDelay : false,

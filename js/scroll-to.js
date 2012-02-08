@@ -30,7 +30,7 @@
 (function(){
 
   $.fn.scrollTo = function(top){
-    return scroll(this,top);
+    return scrollT(this,top);
   };
 
   // iOS generates an awful jitter since the elements can be off by a fraction
@@ -44,7 +44,7 @@
     }
   }
 
-  function scroll(el, top){
+  function scrollT(el, top){
     if(veryNear(top)){ return el; }
 
     $(el).parent().stop().animate(
@@ -57,14 +57,12 @@
     return el;
   }
 
-}());
+  var anchors = [], pillar;
 
-(function(){
-
-  var pillar, anchor;
-
-  function init(el){
-    anchor = el;
+  // FIXME multiple instances are created
+  function Pillar(el){
+    var anchor = el;
+    anchors.push(el);
     pillar = pillar || $("<div>&nbsp;</div>");
     pillar.css({
       height   : el.outerHeight(true),
@@ -72,7 +70,8 @@
       zIndex   : 1,
       top      : '0px',
       width    : '20px',
-      visibility: 'none'
+      background : "#0F0"
+      // visibility: 'none'
     });
 
     el.css({
@@ -82,111 +81,153 @@
     });
 
     el.parent().append(pillar);
-    return pillar;
   }
 
-  function refresh(){
+  function tallestAnchor(){
+    var hh = _.invoke(anchors,"height");
+    return _.max(hh);
+  }
+
+  Pillar.prototype.refresh = function(){
     pillar.css({
-      height   : anchor.outerHeight(true)
+      height   : tallestAnchor()
     });
-  }
+  };
 
-  window.sn.proto = {
-    init    : init,
-    refresh : refresh
-  }
-
-}());
-
-(function(){
   $.fn.scrollLock = function(options){
     _.extend(sn, options || {});
-    return init(this.selector);
+    return new ScrollLock(this.selector, options);
+  };
+
+  function ScrollLock($selector, options){
+    this.options = options;
+    this.selector = $selector;
+    this.pillar = new Pillar(this.collection().parent());
+    this.initEvents();
+    if(options.mousewheel){ bindMouseWheel(this);}
+    $(window).resize(_.bind(this.deferResize, this));
+    $(window).bind("sn:refresh", _.bind(this.refresh, this));
+    return this.set(this.find());
   }
 
-  //Scroll controller
-  var timer, selector;
-
-  function init($selector){
-    selector = $selector;
-    sn.proto.init(collection().parent());
-    $(window).resize(deferResize);
-    sn.initEvents();
-    if(sn.mousewheel){ bindMouseWheel();}
-    return set(find());
-  }
-
-  function bindMouseWheel(){
+  function bindMouseWheel(sl){
     $('body').bind('mousewheel', function(event, delta) {
       if(Math.abs(delta) % 1 > 0){ // Probably a trackpad
-        console.log("trackpad")
-        return true
+        return true;
       }
       // disable, then renable the mousehweel in 1/2 a second
       $('body').off('mousewheel');
-      setTimeout(bindMouseWheel, 500);
+      setTimeout(_.bind(bindMouseWheel,sl), 500);
 
-      var x = ( delta < 0  ) ? sn.next() : sn.prev();
+      var x = ( delta < 0  ) ? sl.next() : sl.prev();
       event.preventDefault();
       return false;
     });
   }
 
-  function refresh(){
-    sn.proto.refresh();
-    return set(find());
-  }
 
-  $(window).bind("sn:refresh", refresh);
+  ScrollLock.prototype = {
+    initEvents : function(){
+      $(window).on("scroll", _.bind(this.onScroll, this));
+      $(document).on("keyup", _.bind(onKey, this));
+    },
 
-  // TODO (minor) next & prev should just scroll to those elements
-  function next(){
-    var el = find().next();
-    if(el){
-      var t = $(window).scrollTop();
-      $(window).scrollTop(t + el.height());
+    toggle : function(s){
+      if(s){
+        $(window).scrollTop(scrollTop);
+        $(window).on("scroll",onScroll);
+      } else {
+        scrollTop = $(window).scrollTop();
+        $(window).off("scroll");
+      }
+      return sn;
+    },
+
+    scrollEnd: function(){
+      return this.set(this.find());
+    },
+
+    dir :function(el, n){
+      if(el){
+        var t = $(window).scrollTop();
+        $(window).scrollTop(t + (n * el.height()));
+        return el;
+      } else {
+        return find();
+      }
+    },
+
+    next: function(){
+      return this.dir(this.find().next(), 1);
+    },
+
+    prev: function(){
+      return this.dir(this.find().prev(), -1);
+    },
+
+    onScroll: function(e){
+      this.find();
+      if(this.options.scrollEndDelay){
+        clearTimeout(this.timer);
+        this.timer = setTimeout(scrollEnd,this.options.scrollEndDelay);
+      } else {
+        this.scrollEnd();
+      }
+
+      return true;
+    },
+
+    refresh: function(){
+      this.pillar.refresh();
+      return this.set(this.find());
+    },
+
+    set: function(o){
+      return scroll(o[0] ? o : this.find());
+    },
+
+    deferResize: function(){
+      clearTimeout(this.timer);
+      this.timer = setTimeout(_.bind(this.refresh,this), 25);
+    },
+
+    // Turn off the scroll event
+    locked: function(){
+      this.toggle(false);
+      setTimeout(function(){ this.toggle(true);}, 500);
+    },
+
+    select: function(el){
+      if(el.hasClass("active")){ return el;}
+
+      if(this.locking){ locked(); }
+      el.addClass("active").trigger("sn:enter");
+      this.collection().parent().find(".active").not(el).
+        removeClass("active").
+        trigger("sn:exit");
+
       return el;
-    } else {
-      return find();
+    },
+
+    collection : function(){
+      return $(this.selector);
+    },
+
+    find: function(){
+      return this.select($(_.find(this.collection(), inCenter) || this.headsOrTails()));
+    },
+
+    headsOrTails: function(){
+      var top   = $(window).scrollTop(),
+      col   = this.collection().toArray(),
+      head  = $(col.shift()),
+      tail  = $(col.pop());
+
+      if(top < head.position().top){ return head; }
+      if(top > tail.position().top){ return tail; }
+      throw "Could not find element";
     }
-  }
-
-  function prev(){
-    var el = find().prev();
-    if(el){
-      var t = $(window).scrollTop();
-      $(window).scrollTop(t - el.height());
-      return el;
-    } else {
-      return find();
-    }
-  }
-
-  function collection(){
-    return $(selector);
-  }
-
-  function set(o){
-    return scroll(o[0] ? o : find());
-  }
-
-  function select(el){
-    if(el.hasClass("active")){ return el;}
-
-    if(sn.locking){ locked(); }
-    el.addClass("active").trigger("sn:enter");
-    sn.collection().parent().find(".active").not(el).
-      removeClass("active").
-      trigger("sn:exit");
-
-    return el;
-  }
-
-  // Turn off the scroll event
-  function locked(){
-    sn.toggle(false)
-    setTimeout(function(){ sn.toggle(true);}, 500);
-  }
+  };
 
   function scroll(el){
     return el.scrollTo(offBy(el));
@@ -208,75 +249,13 @@
 
   function inCenter(el){
     var d = dim(el);
+
     d.cen = d.top + d.mid;
     return d.elTop <= d.cen && (d.elTop + d.elH) > d.cen;
   }
 
-  function headsOrTails(){
-    var top   = $(window).scrollTop(),
-        col   = collection().toArray(),
-        head  = $(col.shift()),
-        tail  = $(col.pop());
 
-    if(top < head.position().top){ return head; }
-    if(top > tail.position().top){ return tail; }
-    throw "Could not find element";
-  }
-
-  function find(){
-    return select($(_.find(collection(), inCenter) || headsOrTails()));
-  }
-
-  function deferResize(){
-    clearTimeout(timer);
-    timer = setTimeout(refresh, 25);
-  }
-
-  // public functions
-  _.extend(window.sn, {
-    init       : init,
-    collection : collection,
-    set        : set,
-    prev       : prev,
-    next       : next,
-    find       : find,
-    refresh    : refresh,
-    offset     : offBy
-  });
-
-}());
-
-(function(){
-  // Scroll event handling
-  var timer, scrollTop;
-
-  function scrollEnd(){
-    return sn.set(sn.find());
-  }
-
-  sn.toggle = function(s){
-    if(s){
-      $(window).scrollTop(scrollTop);
-      $(window).on("scroll",onScroll);
-    } else {
-      scrollTop = $(window).scrollTop();
-      $(window).off("scroll");
-    }
-    return sn;
-  }
-
-  function onScroll(e){
-    sn.find();
-    if(sn.scrollEndDelay){
-      clearTimeout(timer);
-      timer = setTimeout(scrollEnd,sn.scrollEndDelay);
-    } else {
-      scrollEnd();
-    }
-
-    return true;
-  }
-
+  // TODO trigger events here
   function onKey(e){
     switch(e.keyCode){
       case 38: sn.prev(); break; // up arrow
@@ -286,12 +265,6 @@
     return true;
   }
 
-  function initEvents(){
-    $(window).on("scroll",onScroll);
-    $(document).on("keyup", onKey);
-  }
-
-  sn.initEvents = initEvents;
 
 }());
 
