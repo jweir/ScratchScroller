@@ -14,7 +14,14 @@
 
   // TODO add the correct text selection logic
   function enter(){
-    $("#legend").hide().html($(this).find("p").html()).fadeIn();
+    // Set the post title
+    $("#aux-inner").find('div#aux-title').hide().html($(this).find("div.aux-title").html()).fadeIn();
+    // Set the description
+    $("#aux-inner").find('p#aux-desc').hide().html($(this).find("p").not('.raw-text').html()).fadeIn();
+
+    // Set share link
+    var permalink = $(this).find("div.aux-permalink").html();
+    $("#aux-inner").find('div#aux-share a').hide().attr('href',permalink).fadeIn();
   }
 
   function init(){
@@ -22,9 +29,11 @@
     $("body").on("sn:exit", ".post", exit);
     $("body").on("sn:enter",".post", enter);
 
+    $(".post").on("click", function(e){sn.set(sn.select($(this))); return true;})
+
     $(".post").scrollLock({
-      easing         : "easeOutQuad",
-      scrollDuration : 700,
+      easing         : "easeOutQuint",
+      scrollDuration : 800,
       scrollEndDelay : false,
       mousewheel     : true,
       locking        : true
