@@ -71,6 +71,7 @@
       height   : el.outerHeight(true),
       position : 'absolute',
       zIndex   : 1,
+      left     : '0px',
       top      : '0px',
       width    : '20px' //,visibility: 'none'
     });
@@ -81,7 +82,7 @@
       top      : el.offset().top
     });
 
-    el.parent().append(pillar);
+    $("body").append(pillar);
     return $(pillar);
   }
 
@@ -194,7 +195,7 @@
   function dim(el){
     return {
       elTop : $(el).position().top,
-      elH   : $(el).outerHeight(),
+      elH   : $(el).outerHeight(true),
       top   : $(window).scrollTop(),
       mid   : $(window).height()/2
     };

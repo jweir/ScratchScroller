@@ -8,8 +8,9 @@
   // Stop videos (Vimeo only)
   // ensure http://a.vimeocdn.com/js/froogaloop2.min.js
   function exit(){
-    var video = $(this).find("iframe")[0];
-    if(video){ $f(video).api("pause"); }
+    //disable vimeo support
+    //var video = $(this).find("iframe")[0];
+    //if(video){ $f(video).api("pause"); }
   }
 
   // TODO add the correct text selection logic
@@ -24,10 +25,17 @@
     $("#aux-inner").find('div#aux-share a').hide().attr('href',permalink).fadeIn();
   }
 
+  function checkForLast(){
+    if($(this).next().length === 0){
+      console.log("grab more content")
+    }
+  }
+
   function init(){
     // Define the events before initializing the plugin
     $("body").on("sn:exit", ".post", exit);
     $("body").on("sn:enter",".post", enter);
+    $("body").on("sn:enter",".post", checkForLast);
 
     $(".post").on("click", function(e){sn.set(sn.select($(this))); return true;})
 
@@ -42,4 +50,9 @@
 
   $(init);
 
+  var prevOnload = window.onload;
+  window.onload = function(){
+    if(prevOnload){ prevOnload()}
+    sn.refresh()
+  };
 }());
