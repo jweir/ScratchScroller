@@ -21,7 +21,6 @@
   window.sn = {
     easing : "easeOutExpo", // http://jqueryui.com/demos/effect/easing.html
     scrollDuration : 350,
-    scrollEndDelay : 10,    // timeout before the scroll animation starts, set to false to fire instantly
     mousewheel     : false,
     locking        : false
   };
@@ -254,12 +253,9 @@
 (function(){
   // Scroll event handling
   var timer, scrollTop;
+
   // TODO improve this logic
   sn.enabled = true;
-
-  function scrollEnd(){
-    return sn.set(sn.find());
-  }
 
   sn.toggle = function(s){
     sn.enabled = s;
@@ -277,15 +273,7 @@
   function onScroll(e){
     // TODO is this guard necessary?
     if(!sn.enabled){return true;}
-    // TODO remove scrollEndDelay ?
-    if(sn.scrollEndDelay){
-      sn.find();
-      clearTimeout(timer);
-      timer = setTimeout(scrollEnd,sn.scrollEndDelay);
-    } else {
-      scrollEnd();
-    }
-
+    sn.set(sn.find());
     return true;
   }
 

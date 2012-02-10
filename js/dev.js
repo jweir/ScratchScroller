@@ -42,7 +42,6 @@
     $(".post").scrollLock({
       easing         : "easeOutQuint",
       scrollDuration : 800,
-      scrollEndDelay : false,
       mousewheel     : true,
       locking        : true
     });
