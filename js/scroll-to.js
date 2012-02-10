@@ -24,7 +24,7 @@
     scrollEndDelay : 10,    // timeout before the scroll animation starts, set to false to fire instantly
     mousewheel     : false,
     locking        : false
-  }
+  };
 
 }());
 
@@ -73,7 +73,8 @@
       zIndex   : 1,
       left     : '0px',
       top      : '0px',
-      width    : '20px' //,visibility: 'none'
+      width    : '20px'
+      //,visibility: 'none' // TODO enable the visibility and test in IE
     });
 
     el.css({
@@ -95,7 +96,7 @@
   window.sn.proto = {
     init    : init,
     refresh : refresh
-  }
+  };
 
 }());
 
@@ -103,7 +104,7 @@
   $.fn.scrollLock = function(options){
     _.extend(sn, options || {});
     return init(this.selector);
-  }
+  };
 
   //Scroll controller
   var timer, selector;
@@ -120,8 +121,9 @@
   function bindMouseWheel(){
     $('body').bind('mousewheel', function(event, delta) {
       if(Math.abs(delta) % 1 > 0){ // Probably a trackpad
-        return true
+        return true;
       }
+
       // disable, then renable the mousehweel in 1/2 a second
       $('body').off('mousewheel');
       setTimeout(bindMouseWheel, 500);
@@ -139,7 +141,6 @@
 
   $(window).bind("sn:refresh", refresh);
 
-  // TODO (minor) next & prev should just scroll to those elements
   function next(){
     var el = find().next();
     if(el){
@@ -170,21 +171,23 @@
     return scroll(o[0] ? o : find());
   }
 
+  // TODO make the active class an option
   function select(el){
     if(el.hasClass("active")){ return el;}
 
-    if(sn.locking){ locked(); }
-    el.addClass("active").trigger("sn:enter");
-    sn.collection().parent().find(".active").not(el).
-      removeClass("active").
-      trigger("sn:exit");
-
+    if(sn.enabled){ // TODO cleanup this block
+      if(sn.locking){ locked(); }
+      el.addClass("active").trigger("sn:enter");
+      sn.collection().parent().find(".active").not(el).
+        removeClass("active").
+        trigger("sn:exit");
+    }
     return el;
   }
 
   // Turn off the scroll event
   function locked(){
-    sn.toggle(false)
+    sn.toggle(false);
     setTimeout(function(){ sn.toggle(true);}, 500);
   }
 
@@ -220,7 +223,6 @@
 
     if(top < head.position().top){ return head; }
     if(top > tail.position().top){ return tail; }
-    console.log("not found", $(window).scrollTop());
     return $('.active');
   }
 
@@ -252,23 +254,30 @@
 (function(){
   // Scroll event handling
   var timer, scrollTop;
+  // TODO improve this logic
+  sn.enabled = true;
 
   function scrollEnd(){
     return sn.set(sn.find());
   }
 
   sn.toggle = function(s){
-    if(s){
-      $(window).scrollTop(scrollTop);
+    sn.enabled = s;
+    if(sn.enabled){
       $(window).on("scroll",onScroll);
+      $(window).scrollTop(scrollTop);
     } else {
+      $(window).off("scroll", onScroll);
       scrollTop = $(window).scrollTop();
-      $(window).off("scroll");
+
     }
     return sn;
-  }
+  };
 
   function onScroll(e){
+    // TODO is this guard necessary?
+    if(!sn.enabled){return true;}
+    // TODO remove scrollEndDelay ?
     if(sn.scrollEndDelay){
       sn.find();
       clearTimeout(timer);
@@ -280,6 +289,8 @@
     return true;
   }
 
+  // TODO add an option to enable this
+  // TODO disable if sn.enable false
   function onKey(e){
     switch(e.keyCode){
       case 38: sn.prev(); break; // up arrow
